@@ -7,16 +7,15 @@ public abstract class BaseMovementRule implements MovementRule {
                                   Collection<ChessMove> moves, boolean allowDistance) {
 
         ChessPosition lastPosition = position;
-        ChessPosition newPosition = new ChessPosition(position.getRow()+rowInc, position.getColumn()+colInc);
+        ChessPosition newPosition = new ChessPosition(position.getRow() + rowInc, position.getColumn() + colInc);
 
         while (lastPosition.getRow() + rowInc <= 8 && lastPosition.getRow() + rowInc >= 1 &&
                 lastPosition.getColumn() + colInc <= 8 && lastPosition.getColumn() + colInc >= 1) {
 
-            if (board.getPiece(newPosition) instanceof ChessPiece) {
+            if (board.getPiece(newPosition) != null) {
                 if (board.getPiece(newPosition).getTeamColor() == board.getPiece(position).getTeamColor()) {
                     break;
-                }
-                else {
+                } else {
                     moves.add(new ChessMove(position, newPosition, null));
                     break;
                 }
@@ -24,12 +23,12 @@ public abstract class BaseMovementRule implements MovementRule {
 
             moves.add(new ChessMove(position, newPosition, null));
 
-            if(!allowDistance) {
+            if (!allowDistance) {
                 break;
             }
 
             lastPosition = newPosition;
-            newPosition = new ChessPosition(newPosition.getRow()+rowInc, newPosition.getColumn()+colInc);
+            newPosition = new ChessPosition(newPosition.getRow() + rowInc, newPosition.getColumn() + colInc);
         }
     }
 
