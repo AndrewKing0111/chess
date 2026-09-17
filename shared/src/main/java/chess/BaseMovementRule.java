@@ -1,11 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import static chess.ChessPiece.PieceType.KNIGHT;
 
 public abstract class BaseMovementRule implements MovementRule {
     protected void calculateMoves(ChessBoard board, ChessPosition position, int rowInc, int colInc,
