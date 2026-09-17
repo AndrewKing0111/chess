@@ -7,7 +7,7 @@ public class Rules {
     private final HashMap<ChessPiece.PieceType, MovementRule> rules = new HashMap<>();
 
     public Rules() {
-        //rules.put(KING, new KingMovementRule());
+        rules.put(ROOK, new RookMovementRule());
         rules.put(BISHOP, new BishopMovementRule());
     }
 
