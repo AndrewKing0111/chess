@@ -9,6 +9,7 @@ public class Rules {
     public Rules() {
         rules.put(ROOK, new RookMovementRule());
         rules.put(BISHOP, new BishopMovementRule());
+        rules.put(QUEEN, new QueenMovementRule());
     }
 
     public MovementRule pieceRule(ChessPiece.PieceType pieceType) {
