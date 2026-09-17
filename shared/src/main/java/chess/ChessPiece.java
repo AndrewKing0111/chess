@@ -53,7 +53,8 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
+        Rules rules = new Rules();
+        return rules.pieceRule(this.type).moves(board, myPosition);
     }
 
 

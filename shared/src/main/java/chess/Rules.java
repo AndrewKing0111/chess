@@ -1,0 +1,17 @@
+package chess;
+
+import java.util.HashMap;
+import static chess.ChessPiece.PieceType.*;
+
+public class Rules {
+    private final HashMap<ChessPiece.PieceType, MovementRule> rules = new HashMap<>();
+
+    public Rules() {
+        //rules.put(KING, new KingMovementRule());
+        rules.put(BISHOP, new BishopMovementRule());
+    }
+
+    public MovementRule pieceRule(ChessPiece.PieceType pieceType) {
+        return rules.get(pieceType);
+    }
+}
