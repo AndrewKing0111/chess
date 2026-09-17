@@ -33,6 +33,10 @@ public class ChessPosition {
         return col;
     }
 
+    public String toString() {
+        return String.format("[%s,%s]", row, col);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
