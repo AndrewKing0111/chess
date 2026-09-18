@@ -12,6 +12,7 @@ public class Rules {
         rules.put(ROOK, new RookMovementRule());
         rules.put(BISHOP, new BishopMovementRule());
         rules.put(KNIGHT, new KnightMovementRule());
+        rules.put(PAWN, new PawnMovementRule());
     }
 
     public MovementRule pieceRule(ChessPiece.PieceType pieceType) {
