@@ -1,7 +1,12 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+
+import static chess.ChessGame.TeamColor.*;
+import static chess.ChessPiece.PieceType.*;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -11,9 +16,9 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    ChessPiece[][] board = new ChessPiece[8][8];
+    ChessPiece[][] board;
     public ChessBoard() {
-        
+        board = new ChessPiece[8][8];
     }
 
     /**
@@ -42,7 +47,41 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        board = new ChessPiece[8][8];
+        ArrayList<ChessPiece.PieceType> pieces = new ArrayList<>(List.of(ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK));
+        for (int col=1; col<=8; col++) {
+            addPiece(new ChessPosition(1,col), new ChessPiece(WHITE, pieces.get(col-1)));
+        }
+
+        for (int col=1; col<=8; col++) {
+            addPiece(new ChessPosition(2,col), new ChessPiece(WHITE, PAWN));
+        }
+
+        for (int col=1; col<=8; col++) {
+            addPiece(new ChessPosition(8,col), new ChessPiece(BLACK, pieces.get(col-1)));
+        }
+
+        for (int col=1; col<=8; col++) {
+            addPiece(new ChessPosition(7,col), new ChessPiece(BLACK, PAWN));
+        }
+
+
+    }
+
+    @Override
+    public String toString() {
+        String boardString = "";
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j] != null) {
+                    boardString = boardString.concat(board[i][j].toString());
+                } else {
+                    boardString = boardString.concat(" ");
+                }
+            }
+            boardString = boardString.concat("\n");
+        }
+        return boardString;
     }
 
     @Override

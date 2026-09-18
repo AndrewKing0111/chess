@@ -57,6 +57,42 @@ public class ChessPiece {
         return rules.pieceRule(this.type).moves(board, myPosition);
     }
 
+    public String toString() {
+        switch (this.type) {
+            case KING:
+                if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    return "k";
+                }
+                return "K";
+            case QUEEN:
+                if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    return "q";
+                }
+                return "Q";
+            case BISHOP:
+                if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    return "b";
+                }
+                return "B";
+            case KNIGHT:
+                if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    return "n";
+                }
+                return "N";
+            case ROOK:
+                if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    return "r";
+                }
+                return "R";
+            case PAWN:
+                if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+                    return "p";
+                }
+                return "P";
+            default:
+                return "";
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
