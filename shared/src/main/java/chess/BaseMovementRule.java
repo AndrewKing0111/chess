@@ -2,6 +2,8 @@ package chess;
 
 import java.util.Collection;
 
+import static chess.ChessPiece.PieceType.*;
+
 public abstract class BaseMovementRule implements MovementRule {
     protected void calculateMoves(ChessBoard board, ChessPosition position, int rowInc, int colInc,
                                   Collection<ChessMove> moves, boolean allowDistance) {
@@ -16,12 +18,20 @@ public abstract class BaseMovementRule implements MovementRule {
                 if (board.getPiece(newPosition).getTeamColor() == board.getPiece(position).getTeamColor()) {
                     break;
                 } else {
-                    moves.add(new ChessMove(position, newPosition, null));
+                    if (board.getPiece(position).getPieceType() == PAWN && (newPosition.getRow() == 1 || newPosition.getRow() == 8)) {
+                        calculatePawnMoves(position, newPosition, moves);
+                    } else {
+                        moves.add(new ChessMove(position, newPosition, null));
+                    }
                     break;
                 }
             }
 
-            moves.add(new ChessMove(position, newPosition, null));
+            if (board.getPiece(position).getPieceType() == PAWN && (newPosition.getRow() == 1 || newPosition.getRow() == 8)) {
+                calculatePawnMoves(position, newPosition, moves);
+            } else {
+                moves.add(new ChessMove(position, newPosition, null));
+            }
 
             if (!allowDistance) {
                 break;
@@ -30,6 +40,13 @@ public abstract class BaseMovementRule implements MovementRule {
             lastPosition = newPosition;
             newPosition = new ChessPosition(newPosition.getRow() + rowInc, newPosition.getColumn() + colInc);
         }
+    }
+
+    public void calculatePawnMoves(ChessPosition position, ChessPosition newPosition, Collection<ChessMove> moves) {
+        moves.add(new ChessMove(position, newPosition, QUEEN));
+        moves.add(new ChessMove(position, newPosition, BISHOP));
+        moves.add(new ChessMove(position, newPosition, KNIGHT));
+        moves.add(new ChessMove(position, newPosition, ROOK));
     }
 
     public abstract Collection<ChessMove> moves(ChessBoard board, ChessPosition position);
