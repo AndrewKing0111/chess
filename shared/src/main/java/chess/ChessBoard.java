@@ -64,8 +64,6 @@ public class ChessBoard {
         for (int col=1; col<=8; col++) {
             addPiece(new ChessPosition(7,col), new ChessPiece(BLACK, PAWN));
         }
-
-
     }
 
     @Override
@@ -74,12 +72,13 @@ public class ChessBoard {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 if (board[i][j] != null) {
+                    boardString += "|";
                     boardString = boardString.concat(board[i][j].toString());
                 } else {
-                    boardString = boardString.concat(" ");
+                    boardString = boardString.concat("| ");
                 }
             }
-            boardString = boardString.concat("\n");
+            boardString = boardString.concat("|\n");
         }
         return boardString;
     }
