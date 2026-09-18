@@ -18,20 +18,12 @@ public abstract class BaseMovementRule implements MovementRule {
                 if (board.getPiece(newPosition).getTeamColor() == board.getPiece(position).getTeamColor()) {
                     break;
                 } else {
-                    if (board.getPiece(position).getPieceType() == PAWN && (newPosition.getRow() == 1 || newPosition.getRow() == 8)) {
-                        calculatePawnMoves(position, newPosition, moves);
-                    } else {
-                        moves.add(new ChessMove(position, newPosition, null));
-                    }
+                    calculateMovesHelper(board, position, newPosition, moves);
                     break;
                 }
             }
 
-            if (board.getPiece(position).getPieceType() == PAWN && (newPosition.getRow() == 1 || newPosition.getRow() == 8)) {
-                calculatePawnMoves(position, newPosition, moves);
-            } else {
-                moves.add(new ChessMove(position, newPosition, null));
-            }
+            calculateMovesHelper(board, position, newPosition, moves);
 
             if (!allowDistance) {
                 break;
@@ -42,11 +34,16 @@ public abstract class BaseMovementRule implements MovementRule {
         }
     }
 
-    public void calculatePawnMoves(ChessPosition position, ChessPosition newPosition, Collection<ChessMove> moves) {
-        moves.add(new ChessMove(position, newPosition, QUEEN));
-        moves.add(new ChessMove(position, newPosition, BISHOP));
-        moves.add(new ChessMove(position, newPosition, KNIGHT));
-        moves.add(new ChessMove(position, newPosition, ROOK));
+    private void calculateMovesHelper(ChessBoard board, ChessPosition position, ChessPosition newPosition, Collection<ChessMove> moves) {
+        if (board.getPiece(position).getPieceType() == PAWN && (newPosition.getRow() == 1 || newPosition.getRow() == 8)) {
+            moves.add(new ChessMove(position, newPosition, QUEEN));
+            moves.add(new ChessMove(position, newPosition, BISHOP));
+            moves.add(new ChessMove(position, newPosition, KNIGHT));
+            moves.add(new ChessMove(position, newPosition, ROOK));
+        } else {
+            moves.add(new ChessMove(position, newPosition, null));
+        }
+
     }
 
     public abstract Collection<ChessMove> moves(ChessBoard board, ChessPosition position);
