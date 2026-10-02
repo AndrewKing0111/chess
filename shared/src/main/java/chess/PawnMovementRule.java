@@ -3,8 +3,8 @@ package chess;
 import java.util.Collection;
 import java.util.HashSet;
 
-import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
+import static chess.ChessPiece.PieceType.*;
 
 public class PawnMovementRule extends BaseMovementRule {
 
@@ -16,12 +16,12 @@ public class PawnMovementRule extends BaseMovementRule {
         int rowInc;
         int startRow;
 
-        if (board.getPiece(position).getTeamColor() == BLACK) {
-            rowInc = -1;
-            startRow = 7;
-        } else {
+        if (board.getPiece(position).getTeamColor() == WHITE) {
             rowInc = 1;
             startRow = 2;
+        } else {
+            rowInc = -1;
+            startRow = 7;
         }
 
         if (board.getPiece(new ChessPosition(currentRow +rowInc, currentCol)) == null) {
@@ -31,15 +31,30 @@ public class PawnMovementRule extends BaseMovementRule {
                 calculateMoves(board, position, rowInc * 2, 0, moves, false);
             }
         }
-        if (currentCol + 1 <= 8) {
+        if (currentCol < 9) {
             if (board.getPiece(new ChessPosition(currentRow + rowInc, currentCol + 1)) != null) {
                 calculateMoves(board, position, rowInc, 1, moves, false);
             }
         }
-        if (currentCol - 1 >= 1) {
+        if (currentCol > 0) {
             if (board.getPiece(new ChessPosition(currentRow + rowInc, currentCol - 1)) != null) {
                 calculateMoves(board, position, rowInc, -1, moves, false);
             }
+        }
+
+        var movesToRemove = new HashSet<ChessMove>();
+        for (ChessMove move : moves) {
+            if (move.getEndPosition().getRow() == 8 || move.getEndPosition().getRow() == 1) {
+                movesToRemove.add(move);
+            }
+        }
+
+        for (ChessMove move : movesToRemove) {
+            moves.add(new ChessMove(move.getStartPosition(), move.getEndPosition(), QUEEN));
+            moves.add(new ChessMove(move.getStartPosition(), move.getEndPosition(), BISHOP));
+            moves.add(new ChessMove(move.getStartPosition(), move.getEndPosition(), KNIGHT));
+            moves.add(new ChessMove(move.getStartPosition(), move.getEndPosition(), ROOK));
+            moves.remove(move);
         }
 
         return moves;
