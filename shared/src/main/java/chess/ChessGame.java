@@ -63,7 +63,7 @@ public class ChessGame {
         Collection<ChessMove> possibleMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
 
         for (ChessMove move : possibleMoves) {
-            ChessBoard tempBoard = gameBoard;
+            ChessBoard tempBoard = new ChessBoard(gameBoard);
             gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(startPosition));
             if (!isInCheck(gameBoard.getPiece(startPosition).getTeamColor())) {
                 legalMoves.add(move);

@@ -22,6 +22,10 @@ public class ChessBoard {
         board = new ChessPiece[8][8];
     }
 
+    public ChessBoard(ChessBoard other) {
+        this.board = other.board;
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
