@@ -17,6 +17,7 @@ import static chess.ChessPiece.PieceType.*;
 public class ChessBoard {
 
     ChessPiece[][] board;
+
     public ChessBoard() {
         board = new ChessPiece[8][8];
     }
@@ -28,7 +29,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn()-1] = piece;
+        board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -39,7 +40,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()-1][position.getColumn()-1];
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
@@ -49,21 +50,25 @@ public class ChessBoard {
     public void resetBoard() {
         board = new ChessPiece[8][8];
         ArrayList<ChessPiece.PieceType> pieces = new ArrayList<>(List.of(ROOK, KNIGHT, BISHOP, QUEEN, KING, BISHOP, KNIGHT, ROOK));
-        for (int col=1; col<=8; col++) {
-            addPiece(new ChessPosition(1,col), new ChessPiece(WHITE, pieces.get(col-1)));
+        for (int col = 1; col <= 8; col++) {
+            addPiece(new ChessPosition(1, col), new ChessPiece(WHITE, pieces.get(col - 1)));
         }
 
-        for (int col=1; col<=8; col++) {
-            addPiece(new ChessPosition(2,col), new ChessPiece(WHITE, PAWN));
+        for (int col = 1; col <= 8; col++) {
+            addPiece(new ChessPosition(2, col), new ChessPiece(WHITE, PAWN));
         }
 
-        for (int col=1; col<=8; col++) {
-            addPiece(new ChessPosition(8,col), new ChessPiece(BLACK, pieces.get(col-1)));
+        for (int col = 1; col <= 8; col++) {
+            addPiece(new ChessPosition(8, col), new ChessPiece(BLACK, pieces.get(col - 1)));
         }
 
-        for (int col=1; col<=8; col++) {
-            addPiece(new ChessPosition(7,col), new ChessPiece(BLACK, PAWN));
+        for (int col = 1; col <= 8; col++) {
+            addPiece(new ChessPosition(7, col), new ChessPiece(BLACK, PAWN));
         }
+    }
+
+    public void removePiece(ChessPosition position) {
+        board[position.getRow() - 1][position.getColumn() - 1] = null;
     }
 
     @Override
