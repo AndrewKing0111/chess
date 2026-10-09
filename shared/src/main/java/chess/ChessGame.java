@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -68,7 +69,6 @@ public class ChessGame {
             if (!isInCheck(gameBoard.getPiece(startPosition).getTeamColor())) {
                 legalMoves.add(move);
             }
-            gameBoard = tempBoard;
         }
         return legalMoves;
     }
@@ -154,7 +154,47 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                if (gameBoard.getPiece(position) != null) {
+                    if (gameBoard.getPiece(position).getPieceType() == KING) {
+                        if (gameBoard.getPiece(position).getTeamColor() == WHITE) {
+                            whiteKingPos = position;
+                        } else {
+                            blackKingPos = position;
+                        }
+                    }
+                }
+            }
+        }
+
+        Collection<ChessMove> possibleMoves;
+        Rules rules = new Rules();
+        if (teamColor == WHITE) {
+            possibleMoves = rules.pieceRule(KING).moves(gameBoard, whiteKingPos);
+        } else {
+            possibleMoves = rules.pieceRule(KING).moves(gameBoard, blackKingPos);
+        }
+
+        Collection<ChessMove> movesToRemove = new HashSet<>();
+        for (ChessMove move : possibleMoves) {
+            ChessBoard tempBoard = new ChessBoard(gameBoard);
+            tempBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
+            tempBoard.removePiece(move.getStartPosition());
+            if (isInCheck(teamColor)) {
+                movesToRemove.add(move);
+            }
+        }
+
+        for (ChessMove move : movesToRemove) {
+            possibleMoves.remove(move);
+        }
+
+        if (possibleMoves.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
     /**
