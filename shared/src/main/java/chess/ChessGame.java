@@ -18,12 +18,10 @@ public class ChessGame {
 
     private ChessBoard gameBoard = new ChessBoard();
     private TeamColor turn = WHITE;
-    private ChessPosition whiteKingPos = new ChessPosition(1, 5);
-    private ChessPosition blackKingPos = new ChessPosition(8, 5);
+    private ChessPosition whiteKingPos;
+    private ChessPosition blackKingPos;
 
-    public ChessGame() {
-        gameBoard.resetBoard();
-    }
+    public ChessGame() { gameBoard.resetBoard(); }
 
     /**
      * @return Which team's turn it is
