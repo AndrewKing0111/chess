@@ -69,6 +69,7 @@ public class ChessGame {
             if (!isInCheck(gameBoard.getPiece(startPosition).getTeamColor())) {
                 legalMoves.add(move);
             }
+            gameBoard = new ChessBoard(tempBoard);
         }
         return legalMoves;
     }
@@ -180,11 +181,12 @@ public class ChessGame {
         Collection<ChessMove> movesToRemove = new HashSet<>();
         for (ChessMove move : possibleMoves) {
             ChessBoard tempBoard = new ChessBoard(gameBoard);
-            tempBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
-            tempBoard.removePiece(move.getStartPosition());
+            gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
+            gameBoard.removePiece(move.getStartPosition());
             if (isInCheck(teamColor)) {
                 movesToRemove.add(move);
             }
+            gameBoard = new ChessBoard(tempBoard);
         }
 
         for (ChessMove move : movesToRemove) {
