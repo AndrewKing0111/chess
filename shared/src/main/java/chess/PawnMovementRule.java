@@ -24,21 +24,24 @@ public class PawnMovementRule extends BaseMovementRule {
             startRow = 7;
         }
 
-        if (board.getPiece(new ChessPosition(currentRow + rowInc, currentCol)) == null) {
-            calculateMoves(board, position, rowInc, 0, moves, false);
+        if ((rowInc == 1 && currentRow < 8) || (rowInc == -1 && currentRow > 1)) {
+            if (board.getPiece(new ChessPosition(currentRow + rowInc, currentCol)) == null) {
+                calculateMoves(board, position, rowInc, 0, moves, false);
 
-            if (currentRow == startRow && board.getPiece(new ChessPosition(currentRow + rowInc * 2, currentCol)) == null) {
-                calculateMoves(board, position, rowInc * 2, 0, moves, false);
+                if (currentRow == startRow && board.getPiece(new ChessPosition(currentRow + rowInc * 2, currentCol)) == null) {
+                    calculateMoves(board, position, rowInc * 2, 0, moves, false);
+                }
             }
-        }
-        if (currentCol < 8) {
-            if (board.getPiece(new ChessPosition(currentRow + rowInc, currentCol + 1)) != null) {
-                calculateMoves(board, position, rowInc, 1, moves, false);
+
+            if (currentCol < 8) {
+                if (board.getPiece(new ChessPosition(currentRow + rowInc, currentCol + 1)) != null) {
+                    calculateMoves(board, position, rowInc, 1, moves, false);
+                }
             }
-        }
-        if (currentCol > 1) {
-            if (board.getPiece(new ChessPosition(currentRow + rowInc, currentCol - 1)) != null) {
-                calculateMoves(board, position, rowInc, -1, moves, false);
+            if (currentCol > 1) {
+                if (board.getPiece(new ChessPosition(currentRow + rowInc, currentCol - 1)) != null) {
+                    calculateMoves(board, position, rowInc, -1, moves, false);
+                }
             }
         }
 
