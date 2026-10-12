@@ -181,31 +181,7 @@ public class ChessGame {
             return false;
         }
 
-        for (int row = 1; row < 9; row++) {
-            for (int col = 1; col < 9; col++) {
-                ChessPosition position = new ChessPosition(row, col);
-                ChessPiece piece = gameBoard.getPiece(position);
-                if ((piece == null) || (piece.getTeamColor() != teamColor) || (piece.getPieceType() == KING)) {
-                    continue;
-                }
-
-                Collection<ChessMove> checkMoves = piece.pieceMoves(gameBoard, position);
-                Collection<ChessMove> outOfCheckMoves = new HashSet<>();
-                for (ChessMove move : checkMoves) {
-                    ChessBoard tempBoard = new ChessBoard(gameBoard);
-                    gameBoard.addPiece(move.getEndPosition(), piece);
-                    gameBoard.removePiece(move.getStartPosition());
-                    if (!isInCheck(turn)) {
-                        outOfCheckMoves.add(move);
-                    }
-                    gameBoard = new ChessBoard(tempBoard);
-                }
-                if (!outOfCheckMoves.isEmpty()) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return teammateCanSave(teamColor);
     }
 
     /**
@@ -255,6 +231,34 @@ public class ChessGame {
                 }
             }
         }
+    }
+
+    private boolean teammateCanSave(TeamColor teamColor) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = gameBoard.getPiece(position);
+                if ((piece == null) || (piece.getTeamColor() != teamColor) || (piece.getPieceType() == KING)) {
+                    continue;
+                }
+
+                Collection<ChessMove> checkMoves = piece.pieceMoves(gameBoard, position);
+                Collection<ChessMove> outOfCheckMoves = new HashSet<>();
+                for (ChessMove move : checkMoves) {
+                    ChessBoard tempBoard = new ChessBoard(gameBoard);
+                    gameBoard.addPiece(move.getEndPosition(), piece);
+                    gameBoard.removePiece(move.getStartPosition());
+                    if (!isInCheck(turn)) {
+                        outOfCheckMoves.add(move);
+                    }
+                    gameBoard = new ChessBoard(tempBoard);
+                }
+                if (!outOfCheckMoves.isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
