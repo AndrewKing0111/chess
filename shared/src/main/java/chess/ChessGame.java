@@ -20,7 +20,9 @@ public class ChessGame {
     private ChessPosition whiteKingPos;
     private ChessPosition blackKingPos;
 
-    public ChessGame() { gameBoard.resetBoard(); }
+    public ChessGame() {
+        gameBoard.resetBoard();
+    }
 
     /**
      * @return Which team's turn it is
@@ -88,7 +90,14 @@ public class ChessGame {
 
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if (validMoves.contains(move)) {
-            gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
+            ChessPiece pieceToMove;
+            if (move.getPromotionPiece() != null) {
+                pieceToMove = new ChessPiece(gameBoard.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
+            } else {
+                pieceToMove = gameBoard.getPiece(move.getStartPosition());
+            }
+
+            gameBoard.addPiece(move.getEndPosition(), pieceToMove);
             gameBoard.removePiece(move.getStartPosition());
 
             if (turn == WHITE) {
