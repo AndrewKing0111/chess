@@ -218,7 +218,7 @@ public class ChessGame {
      *
      * @param board the new board to use
      */
-    public void setGameBoard(ChessBoard board) {
+    public void setBoard(ChessBoard board) {
         gameBoard = board;
     }
 
@@ -227,7 +227,7 @@ public class ChessGame {
      *
      * @return the chessboard
      */
-    public ChessBoard getGameBoard() {
+    public ChessBoard getBoard() {
         return gameBoard;
     }
 
@@ -285,11 +285,11 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(getGameBoard(), chessGame.getGameBoard()) && turn == chessGame.turn;
+        return Objects.equals(getBoard(), chessGame.getBoard()) && turn == chessGame.turn;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getGameBoard(), turn);
+        return Objects.hash(getBoard(), turn);
     }
 }

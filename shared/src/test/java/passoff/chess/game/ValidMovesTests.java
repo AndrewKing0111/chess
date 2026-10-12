@@ -20,16 +20,16 @@ public class ValidMovesTests {
 
         var game = new ChessGame();
         game.setTeamTurn(ChessGame.TeamColor.BLACK);
-        game.setGameBoard(TestUtilities.loadBoard("""
-                | | | | | | | | |
-                | | | | | | | | |
-                | |B| | | | | | |
-                | | | | | |K| | |
-                | | |n| | | | | |
-                | | | | | | | | |
-                | | | |q| |k| | |
-                | | | | | | | | |
-                """));
+        game.setBoard(TestUtilities.loadBoard("""
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    | |B| | | | | | |
+                    | | | | | |K| | |
+                    | | |n| | | | | |
+                    | | | | | | | | |
+                    | | | |q| |k| | |
+                    | | | | | | | | |
+                    """));
 
         // Knight moves
         ChessPosition knightPosition = new ChessPosition(4, 3);
@@ -48,16 +48,16 @@ public class ValidMovesTests {
     public void moveIntoCheck() {
 
         var game = new ChessGame();
-        game.setGameBoard(TestUtilities.loadBoard("""
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | | | | | | |
-                |k|r| | | |R| |K|
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | | | | | | |
-                """));
+        game.setBoard(TestUtilities.loadBoard("""
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    |k|r| | | |R| |K|
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    """));
 
         ChessPosition rookPosition = new ChessPosition(5, 6);
         var validMoves = TestUtilities.loadMoves(rookPosition, new int[][]{
@@ -72,16 +72,16 @@ public class ValidMovesTests {
     public void rookPinnedToKing() {
 
         var game = new ChessGame();
-        game.setGameBoard(TestUtilities.loadBoard("""
-                |K| | | | | | |Q|
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | |r| | | | |
-                | | | | | | | | |
-                | |k| | | | | | |
-                | | | | | | | | |
-                """));
+        game.setBoard(TestUtilities.loadBoard("""
+                    |K| | | | | | |Q|
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    | | | |r| | | | |
+                    | | | | | | | | |
+                    | |k| | | | | | |
+                    | | | | | | | | |
+                    """));
 
         ChessPosition position = new ChessPosition(4, 4);
         Assertions.assertTrue(game.validMoves(position).isEmpty(), TRAPPED_PIECE_MOVES);
@@ -94,16 +94,16 @@ public class ValidMovesTests {
 
         var game = new ChessGame();
         game.setTeamTurn(ChessGame.TeamColor.BLACK);
-        game.setGameBoard(TestUtilities.loadBoard("""
-                |R| | | | | | | |
-                | | | |k| | | |b|
-                | | | | |P| | | |
-                |K| |Q|n| | | | |
-                | | | | | | | | |
-                | | | | | | | |r|
-                | | | | | |p| | |
-                | |q| | | | | | |
-                """));
+        game.setBoard(TestUtilities.loadBoard("""
+                    |R| | | | | | | |
+                    | | | |k| | | |b|
+                    | | | | |P| | | |
+                    |K| |Q|n| | | | |
+                    | | | | | | | | |
+                    | | | | | | | |r|
+                    | | | | | |p| | |
+                    | |q| | | | | | |
+                    """));
 
         //get positions
         ChessPosition kingPosition = new ChessPosition(7, 4);
@@ -132,16 +132,16 @@ public class ValidMovesTests {
     public void noPutSelfInDanger() {
 
         var game = new ChessGame();
-        game.setGameBoard(TestUtilities.loadBoard("""
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | | | | | | |
-                | | | | | |k| | |
-                | | | | | | | | |
-                | | | | | |K| | |
-                | | | | | | | | |
-                """));
+        game.setBoard(TestUtilities.loadBoard("""
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    | | | | | | | | |
+                    | | | | | |k| | |
+                    | | | | | | | | |
+                    | | | | | |K| | |
+                    | | | | | | | | |
+                    """));
 
         ChessPosition position = new ChessPosition(2, 6);
         var validMoves = TestUtilities.loadMoves(position, new int[][]{
@@ -154,7 +154,7 @@ public class ValidMovesTests {
     @DisplayName("Valid Moves Independent of Team Turn")
     public void validMovesOtherTeam() {
         var game = new ChessGame();
-        game.setGameBoard(TestUtilities.defaultBoard());
+        game.setBoard(TestUtilities.defaultBoard());
         game.setTeamTurn(ChessGame.TeamColor.BLACK);
 
         ChessPosition position = new ChessPosition(2, 5);

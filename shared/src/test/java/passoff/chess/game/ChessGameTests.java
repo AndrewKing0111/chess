@@ -48,7 +48,7 @@ public class ChessGameTests extends EqualsTestingUtility<ChessGame> {
 
             // Set board
             ChessGame game4 = new ChessGame();
-            game4.setGameBoard(TestUtilities.loadBoard("""
+            game4.setBoard(TestUtilities.loadBoard("""
                     | | | |R| | | | |
                     | | | | | | | | |
                     | | |p|n|p| | | |
