@@ -102,9 +102,9 @@ public class ChessGame {
             gameBoard.removePiece(move.getStartPosition());
 
             if (turn == WHITE) {
-                turn = BLACK;
+                setTeamTurn(BLACK);
             } else {
-                turn = WHITE;
+                setTeamTurn(WHITE);
             }
         } else {
             throw new InvalidMoveException("Invalid move.");
@@ -154,14 +154,7 @@ public class ChessGame {
             return false;
         }
 
-        Collection<ChessMove> possibleMoves;
-        Rules rules = new Rules();
-        if (teamColor == WHITE) {
-            possibleMoves = rules.pieceRule(KING).moves(gameBoard, whiteKingPos);
-        } else {
-            possibleMoves = rules.pieceRule(KING).moves(gameBoard, blackKingPos);
-        }
-
+        Collection<ChessMove> possibleMoves = getKingMoves(teamColor);
         Collection<ChessMove> movesToRemove = new HashSet<>();
         for (ChessMove move : possibleMoves) {
             ChessBoard tempBoard = new ChessBoard(gameBoard);
@@ -277,6 +270,15 @@ public class ChessGame {
             }
         }
         return true;
+    }
+
+    private Collection<ChessMove> getKingMoves(ChessGame.TeamColor teamColor) {
+        Rules rules = new Rules();
+        if (teamColor == WHITE) {
+            return rules.pieceRule(KING).moves(gameBoard, whiteKingPos);
+        } else {
+            return rules.pieceRule(KING).moves(gameBoard, blackKingPos);
+        }
     }
 
     @Override
