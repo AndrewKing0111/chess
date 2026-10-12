@@ -65,7 +65,8 @@ public class ChessGame {
         for (ChessMove move : possibleMoves) {
             ChessBoard tempBoard = new ChessBoard(gameBoard);
             gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(startPosition));
-            if (!isInCheck(gameBoard.getPiece(startPosition).getTeamColor())) {
+            gameBoard.removePiece(move.getStartPosition());
+            if (!isInCheck(gameBoard.getPiece(move.getEndPosition()).getTeamColor())) {
                 legalMoves.add(move);
             }
             gameBoard = new ChessBoard(tempBoard);
@@ -176,10 +177,35 @@ public class ChessGame {
             possibleMoves.remove(move);
         }
 
-        if (possibleMoves.isEmpty()) {
-            return true;
+        if (!possibleMoves.isEmpty()) {
+            return false;
         }
-        return false;
+
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = gameBoard.getPiece(position);
+                if ((piece == null) || (piece.getTeamColor() != teamColor) || (piece.getPieceType() == KING)) {
+                    continue;
+                }
+
+                Collection<ChessMove> checkMoves = piece.pieceMoves(gameBoard, position);
+                Collection<ChessMove> outOfCheckMoves = new HashSet<>();
+                for (ChessMove move : checkMoves) {
+                    ChessBoard tempBoard = new ChessBoard(gameBoard);
+                    gameBoard.addPiece(move.getEndPosition(), piece);
+                    gameBoard.removePiece(move.getStartPosition());
+                    if (!isInCheck(turn)) {
+                        outOfCheckMoves.add(move);
+                    }
+                    gameBoard = new ChessBoard(tempBoard);
+                }
+                if (!outOfCheckMoves.isEmpty()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -218,13 +244,12 @@ public class ChessGame {
                 if (gameBoard.getPiece(position) != null) {
                     if (gameBoard.getPiece(position).getPieceType() == KING) {
                         if (gameBoard.getPiece(position).getTeamColor() == teamColor) {
-                            if (gameBoard.getPiece(position).getTeamColor() == WHITE) {
+                            if (teamColor == WHITE) {
                                 whiteKingPos = position;
-                                return;
                             } else {
                                 blackKingPos = position;
-                                return;
                             }
+                            return;
                         }
                     }
                 }
