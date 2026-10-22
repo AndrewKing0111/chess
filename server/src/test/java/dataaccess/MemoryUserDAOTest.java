@@ -15,7 +15,6 @@ class MemoryUserDAOTest {
     void createUser() throws DataAccessException {
         assertTrue(true);
         var  userDAO = new LocalStorageUserDAO();
-        userDAO.createUser("a", "1", "a");
         var user = userDAO.getUserByUsername("a");
         assertEquals(new UserData("ax", "1", "a"), user);
     }

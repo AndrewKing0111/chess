@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import server.RequestCreateUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,17 +18,22 @@ public class LocalStorageUserDAO implements UserDAO {
     }
 
     @Override
-    public void createUser(String username, String password, String email) throws DataAccessException {
+    public void createUser(RequestCreateUser request) throws DataAccessException {
+        String username = request.getUsername();
+        String password = request.getPassword();
+        String email = request.getEmail();
+
         if ((username == null) || (password == null) || (email == null)) {
-            throw new DataAccessException("Username or password or email is null");
+            throw new DataAccessException("Bad request");
         }
+
         userDataMap.put(username, new UserData(username, password, email));
     }
 
     @Override
     public void deleteUser(String username) throws DataAccessException {
         if (username == null) {
-            throw new DataAccessException("Username is null");
+            throw new DataAccessException("Bad request");
         }
         userDataMap.remove(username);
     }
