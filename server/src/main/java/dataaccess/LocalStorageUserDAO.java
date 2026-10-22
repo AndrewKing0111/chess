@@ -3,11 +3,10 @@ package dataaccess;
 import model.UserData;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
-public class MemoryUserDAO implements UserDAO {
-    private Map<String, UserData> userDataMap =  new HashMap<String, UserData>();
+public class LocalStorageUserDAO implements UserDAO {
+    private Map<String, UserData> userDataMap =  new HashMap<>();
 
     @Override
     public UserData getUserByUsername(String username) throws DataAccessException {
@@ -30,6 +29,7 @@ public class MemoryUserDAO implements UserDAO {
         if (username == null) {
             throw new DataAccessException("Username is null");
         }
+        userDataMap.remove(username);
     }
 
     @Override

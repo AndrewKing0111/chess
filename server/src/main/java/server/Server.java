@@ -1,8 +1,6 @@
 package server;
 
-import dataaccess.DataAccessException;
-import dataaccess.MemoryUserDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import services.Service;
@@ -10,8 +8,10 @@ import services.Service;
 public class Server {
 
     private final Javalin javalin;
-    private UserDAO users = new MemoryUserDAO();
-    private Service service = new Service(users);
+    private UserDAO users = new LocalStorageUserDAO();
+    private GameDAO games = new LocalStorageGameDAO();
+    private AuthDAO auths = new LocalStorageAuthDAO();
+    private Service service = new Service(users, games, auths);
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
