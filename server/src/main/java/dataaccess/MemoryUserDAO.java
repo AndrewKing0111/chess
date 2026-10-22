@@ -2,51 +2,38 @@ package dataaccess;
 
 import model.UserData;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class MemoryUserDAO implements UserDAO {
+    private Map<String, UserData> userDataMap =  new HashMap<String, UserData>();
+
     @Override
-    public UserData getUserByUsername(String username, HashSet<UserData> users) throws DataAccessException {
+    public UserData getUserByUsername(String username) throws DataAccessException {
         if (username == null) {
             throw new DataAccessException("Username is null");
         }
-        for(UserData user : users){
-            if (user.username().equals(username)) {
-                return user;
-            }
-        }
-        throw new DataAccessException("Username not found");
+        return userDataMap.get(username);
     }
 
     @Override
-    public void createUser(String username, String password, String email, HashSet<UserData> users) throws DataAccessException {
+    public void createUser(String username, String password, String email) throws DataAccessException {
         if ((username == null) || (password == null) || (email == null)) {
             throw new DataAccessException("Username or password or email is null");
         }
-        UserData newUser = new UserData(username, password, email);
-        for (UserData user : users) {
-            if (user.username().equals(newUser.username())) {
-                throw new DataAccessException("Username already exists");
-            }
-        }
-        users.add(newUser);
+        userDataMap.put(username, new UserData(username, password, email));
     }
 
     @Override
-    public void deleteUser(String username, HashSet<UserData> users) throws DataAccessException {
+    public void deleteUser(String username) throws DataAccessException {
         if (username == null) {
             throw new DataAccessException("Username is null");
         }
-        UserData userToDelete = null;
-        for(UserData user : users){
-            if (user.username().equals(username)) {
-                userToDelete = user;
-            }
-        }
-        if (userToDelete != null) {
-            users.remove(userToDelete);
-        } else {
-            throw new DataAccessException("Username not found");
-        }
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+        userDataMap.clear();
     }
 }

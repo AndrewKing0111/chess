@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.UserData;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,7 +12,12 @@ class MemoryUserDAOTest {
     }
 
     @Test
-    void createUser() {
+    void createUser() throws DataAccessException {
+        assertTrue(true);
+        var  userDAO = new MemoryUserDAO();
+        userDAO.createUser("a", "1", "a");
+        var user = userDAO.getUserByUsername("a");
+        assertEquals(new UserData("ax", "1", "a"), user);
     }
 
     @Test
