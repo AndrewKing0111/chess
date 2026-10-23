@@ -1,9 +1,7 @@
 package services;
 
 import dataaccess.*;
-import model.AuthData;
-import model.LoginData;
-import model.UserData;
+import model.*;
 
 public class Service {
 
@@ -11,7 +9,8 @@ public class Service {
     private LocalStorageGameDAO games = new LocalStorageGameDAO();
     private LocalStorageAuthDAO auths = new LocalStorageAuthDAO();
 
-    public Service() {}
+    public Service() {
+    }
 
     public void clear() throws DataAccessException {
         users.clear();
@@ -20,14 +19,21 @@ public class Service {
     }
 
     public AuthData registerUser(UserData registerRequest) throws DataAccessException {
-        return users.registerUser(registerRequest, auths);
+        users.registerUser(registerRequest);
+        return auths.createAuth(registerRequest.username());
     }
 
     public AuthData loginUser(LoginData loginRequest) throws DataAccessException {
-        return users.loginUser(loginRequest);
+        users.loginUser(loginRequest);
+        return auths.createAuth(loginRequest.username());
     }
 
     public void logoutUser(String authToken) throws DataAccessException {
         auths.logoutUser(authToken);
+    }
+
+    public int createGame(RequestCreateGame gameRequest) throws DataAccessException {
+        auths.getAuth(gameRequest.authToken());
+        return games.createGame(gameRequest);
     }
 }

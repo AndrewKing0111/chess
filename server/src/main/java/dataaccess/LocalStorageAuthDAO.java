@@ -16,7 +16,7 @@ public class LocalStorageAuthDAO implements AuthDAO {
         }
 
         if (auths.containsKey(username)) {
-            throw new DataAccessException("already taken");
+            auths.remove(username);
         }
 
         try {
@@ -45,6 +45,15 @@ public class LocalStorageAuthDAO implements AuthDAO {
                 throw new DataAccessException("the server failed logout the user");
             }
         }
+    }
+
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        for (Map.Entry<String, AuthData> entry : auths.entrySet()) {
+            if (entry.getValue().authToken().equals(authToken)) {
+                return entry.getValue();
+            }
+        }
+        throw new DataAccessException("unauthorized");
     }
 
     @Override

@@ -4,8 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
-import model.LoginData;
-import model.UserData;
+import model.*;
 import services.Service;
 
 public class Server {
@@ -25,6 +24,7 @@ public class Server {
 
         javalin.delete("/session", this::logoutUser);
 
+        javalin.post("/game", this::createGame);
     }
 
     public void clear(Context ctx) {
@@ -105,6 +105,32 @@ public class Server {
                 ctx.status(401);
             } else {
                 ctx.status(500);
+            }
+        }
+    }
+
+    public void createGame(Context ctx) {
+        String authToken = ctx.header("authorization");
+        var name = new Gson().fromJson(ctx.body(), GameName.class);
+        var gameRequest = new RequestCreateGame(authToken, name.gameName());
+        try {
+            int gameID = service.createGame(gameRequest);
+            ctx.status(200);
+            ctx.result(new Gson().toJson(new GameID(gameID)));
+        } catch (DataAccessException error) {
+            var objToSerialize = new ResultError(error);
+            var json = new Gson().toJson(objToSerialize);
+            ctx.result(json);
+
+            switch (objToSerialize.getMessage()) {
+                case "Error: bad request":
+                    ctx.status(400);
+                    return;
+                case "Error: unauthorized":
+                    ctx.status(401);
+                    return;
+                default:
+                    ctx.status(500);
             }
         }
     }
