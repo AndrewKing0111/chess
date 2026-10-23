@@ -1,15 +1,17 @@
 package dataaccess;
 
 import chess.ChessGame;
+import model.AuthData;
 import model.GameData;
+import model.RequestCreateGame;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 public class LocalStorageGameDAO implements GameDAO {
-    private Map<String, ChessGame> gameList = new HashMap<>();
+    private Map<Integer, GameData> gameList = new HashMap<>();
+    private int counter = 0;
 
     @Override
     public void clear() throws DataAccessException {
@@ -17,16 +19,22 @@ public class LocalStorageGameDAO implements GameDAO {
     }
 
     @Override
-    public int createGame(String gameName) throws DataAccessException {
-        ChessGame game = new ChessGame();
-        String gameID;
-        if (gameList.isEmpty()) {
-            gameID = "1";
-        } else {
-            gameID = Collections.max(gameList.keySet()) + 1;
+    public int createGame(RequestCreateGame gameRequest) throws DataAccessException {
+        String authToken = gameRequest.authToken();
+        String gameName = gameRequest.gameName();
+
+        if ((authToken == null) || (gameName == null)) {
+            throw new DataAccessException("bad request");
         }
-        gameList.put(gameID, game);
-        return Integer.parseInt(gameID);
+
+        ChessGame chessGame = new ChessGame();
+        GameData game = new GameData(counter, null, null, gameName, chessGame);
+        try {
+            gameList.put(counter, game);
+            return counter++;
+        } catch (Exception error) {
+            throw new DataAccessException("the server failed to create the game");
+        }
     }
 
     @Override

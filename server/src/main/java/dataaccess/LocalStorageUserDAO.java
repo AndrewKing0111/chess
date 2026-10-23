@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LocalStorageUserDAO implements UserDAO {
-    private Map<String, UserData> userDataMap =  new HashMap<>();
+    private Map<String, UserData> userDataMap = new HashMap<>();
 
     @Override
     public UserData getUserByUsername(String username) throws DataAccessException {
@@ -19,7 +19,7 @@ public class LocalStorageUserDAO implements UserDAO {
     }
 
     @Override
-    public AuthData registerUser(UserData request, LocalStorageAuthDAO auths) throws DataAccessException {
+    public void registerUser(UserData request) throws DataAccessException {
         String username = request.username();
         String password = request.password();
         String email = request.email();
@@ -34,13 +34,12 @@ public class LocalStorageUserDAO implements UserDAO {
 
         try {
             userDataMap.put(username, new UserData(username, password, email));
-            return auths.createAuth(username);
         } catch (Exception error) {
             throw new DataAccessException("the server failed to register the user");
         }
     }
 
-    public AuthData loginUser(LoginData request) throws DataAccessException {
+    public void loginUser(LoginData request) throws DataAccessException {
         String username = request.username();
         String password = request.password();
 
@@ -49,14 +48,8 @@ public class LocalStorageUserDAO implements UserDAO {
         }
 
         if (!(userDataMap.containsKey(username))
-        || !(userDataMap.get(username).password().equals(password))) {
+                || !(userDataMap.get(username).password().equals(password))) {
             throw new DataAccessException("unauthorized");
-        }
-
-        try {
-            return new LocalStorageAuthDAO().createAuth(username);
-        } catch (Exception error) {
-            throw new DataAccessException("the server failed to login the user");
         }
     }
 
