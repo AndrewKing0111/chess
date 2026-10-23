@@ -30,12 +30,7 @@ public class LocalStorageAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void getAuth(LoginData request) throws DataAccessException {
-
-    }
-
-    @Override
-    public void deleteAuth(String username, String password) throws DataAccessException {
+    public void logoutUser(String logoutRequest) throws DataAccessException {
 
     }
 

@@ -5,9 +5,10 @@ import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.LoginData;
-import model.LogoutData;
 import model.UserData;
 import services.Service;
+
+import java.net.http.HttpHeaders;
 
 public class Server {
 
@@ -95,9 +96,11 @@ public class Server {
     }
 
     public void logout(Context ctx) {
-        var logoutRequest = new Gson().fromJson(ctx.body(), LogoutData.class);
+        String logoutRequest = ctx.header("authorization");
         try {
-            var result = service.logoutUser(logoutRequest);
+            service.logoutUser(logoutRequest);
+        } catch (DataAccessException error) {
+
         }
     }
 
