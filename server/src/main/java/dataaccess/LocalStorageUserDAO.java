@@ -1,7 +1,7 @@
 package dataaccess;
 
 import model.UserData;
-import server.RequestCreateUser;
+import server.ResultRegisterUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,24 +18,27 @@ public class LocalStorageUserDAO implements UserDAO {
     }
 
     @Override
-    public void createUser(RequestCreateUser request) throws DataAccessException {
-        String username = request.getUsername();
-        String password = request.getPassword();
-        String email = request.getEmail();
+    public void registerUser(UserData request) throws DataAccessException {
+        String username = request.username();
+        String password = request.password();
+        String email = request.email();
 
         if ((username == null) || (password == null) || (email == null)) {
-            throw new DataAccessException("Bad request");
+            throw new DataAccessException("Bad request.");
         }
 
-        userDataMap.put(username, new UserData(username, password, email));
-    }
-
-    @Override
-    public void deleteUser(String username) throws DataAccessException {
-        if (username == null) {
-            throw new DataAccessException("Bad request");
+        if (userDataMap.containsKey(username)) {
+            throw new DataAccessException("Already taken.");
         }
-        userDataMap.remove(username);
+
+        try {
+            userDataMap.put(username, new UserData(username, password, email));
+            var auth = new LocalStorageAuthDAO();
+            var authToken = auth.createAuth(username, password, email);
+            var result = new ResultRegisterUser(username, authToken);
+        } catch (Exception error) {
+            throw new DataAccessException("The server failed to register the user.");
+        }
     }
 
     @Override

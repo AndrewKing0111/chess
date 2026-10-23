@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
+import model.UserData;
 import services.Service;
 
 public class Server {
@@ -20,7 +21,7 @@ public class Server {
         // Register your endpoints and exception handlers here.
         javalin.delete("/db", this::clear);
 
-        javalin.post("/user", this::createUser);
+        javalin.post("/user", this::registerUser);
 
     }
 
@@ -38,13 +39,29 @@ public class Server {
         }
     }
 
-    public void createUser(Context ctx) {
+    public void registerUser(Context ctx) {
         var parser = new Gson();
-        var request = parser.fromJson(ctx.body(), RequestCreateUser.class);
+        var request = parser.fromJson(ctx.body(), UserData.class);
         try {
-            users.createUser(request);
+            service.registerUser(request);
+            ctx.status(200);
+            ctx.json("{}");
         } catch (DataAccessException error) {
-            return;
+            var serializer = new Gson();
+            var objToSerialize = new ResultError(error);
+            var json = serializer.toJson(objToSerialize);
+            ctx.result(json);
+
+            switch (objToSerialize.getMessage()) {
+                case "Error: Bad request.":
+                    ctx.status(400);
+                    return;
+                case "Error: Already taken.":
+                    ctx.status(403);
+                    return;
+                default:
+                    ctx.status(500);
+            }
         }
     }
 

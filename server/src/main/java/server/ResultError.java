@@ -8,4 +8,8 @@ public class ResultError {
     public ResultError(DataAccessException error) {
         this.message = "Error: " + error.getMessage();
     }
+
+    public String getMessage() {
+        return message;
+    }
 }

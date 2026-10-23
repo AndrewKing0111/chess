@@ -4,7 +4,7 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
-import server.RequestCreateUser;
+import model.UserData;
 
 public class Service {
 
@@ -24,7 +24,7 @@ public class Service {
         auths.clear();
     }
 
-    public void createUser(RequestCreateUser request) throws DataAccessException {
-        users.createUser(request.getUsername(), request.getPassword(), request.getEmail());
+    public void registerUser(UserData request) throws DataAccessException {
+        users.registerUser(request);
     }
 }
