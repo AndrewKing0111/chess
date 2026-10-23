@@ -1,7 +1,6 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.AuthData;
 import model.GameData;
 import model.RequestCreateGame;
 
@@ -11,7 +10,7 @@ import java.util.Map;
 
 public class LocalStorageGameDAO implements GameDAO {
     private Map<Integer, GameData> gameList = new HashMap<>();
-    private int counter = 0;
+    private int counter = 1;
 
     @Override
     public void clear() throws DataAccessException {

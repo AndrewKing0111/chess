@@ -1,6 +1,5 @@
 package dataaccess;
 
-import model.AuthData;
 import model.LoginData;
 import model.UserData;
 
