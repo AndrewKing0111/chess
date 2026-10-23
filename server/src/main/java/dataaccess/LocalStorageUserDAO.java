@@ -19,7 +19,7 @@ public class LocalStorageUserDAO implements UserDAO {
     }
 
     @Override
-    public AuthData registerUser(UserData request) throws DataAccessException {
+    public AuthData registerUser(UserData request, LocalStorageAuthDAO auths) throws DataAccessException {
         String username = request.username();
         String password = request.password();
         String email = request.email();
@@ -34,8 +34,7 @@ public class LocalStorageUserDAO implements UserDAO {
 
         try {
             userDataMap.put(username, new UserData(username, password, email));
-            var auth = new LocalStorageAuthDAO().createAuth(username);
-            return auth;
+            return auths.createAuth(username);
         } catch (Exception error) {
             throw new DataAccessException("the server failed to register the user");
         }

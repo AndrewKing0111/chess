@@ -8,15 +8,10 @@ import model.LoginData;
 import model.UserData;
 import services.Service;
 
-import java.net.http.HttpHeaders;
-
 public class Server {
 
     private final Javalin javalin;
-    private UserDAO users = new LocalStorageUserDAO();
-    private GameDAO games = new LocalStorageGameDAO();
-    private AuthDAO auths = new LocalStorageAuthDAO();
-    private Service service = new Service(users, games, auths);
+    private Service service = new Service();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -28,7 +23,7 @@ public class Server {
 
         javalin.post("/session", this::loginUser);
 
-        javalin.delete("/session", this::logout);
+        javalin.delete("/session", this::logoutUser);
 
     }
 
@@ -95,7 +90,7 @@ public class Server {
         }
     }
 
-    public void logout(Context ctx) {
+    public void logoutUser(Context ctx) {
         String logoutRequest = ctx.header("authorization");
         try {
             service.logoutUser(logoutRequest);

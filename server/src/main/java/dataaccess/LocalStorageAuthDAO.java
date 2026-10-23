@@ -1,7 +1,6 @@
 package dataaccess;
 
 import model.AuthData;
-import model.LoginData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +29,22 @@ public class LocalStorageAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void logoutUser(String logoutRequest) throws DataAccessException {
-
+    public void logoutUser(String authToken) throws DataAccessException {
+        String username = "";
+        for (Map.Entry<String, AuthData> entry : auths.entrySet()) {
+            if (entry.getValue().authToken().equals(authToken)) {
+                username = entry.getKey();
+            }
+        }
+        if (username.isEmpty()) {
+            throw new DataAccessException("unauthorized");
+        } else {
+            try {
+                auths.remove(username);
+            } catch (Exception error) {
+                throw new DataAccessException("the server failed logout the user");
+            }
+        }
     }
 
     @Override
