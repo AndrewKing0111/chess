@@ -6,6 +6,7 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.LoginData;
+import model.LogoutData;
 import model.UserData;
 
 public class Service {
@@ -26,11 +27,15 @@ public class Service {
         auths.clear();
     }
 
-    public AuthData registerUser(UserData request) throws DataAccessException {
-        return users.registerUser(request);
+    public AuthData registerUser(UserData registerRequest) throws DataAccessException {
+        return users.registerUser(registerRequest);
     }
 
-    public AuthData loginUser(LoginData request) throws DataAccessException{
-        return users.loginUser(request);
+    public AuthData loginUser(LoginData loginRequest) throws DataAccessException{
+        return users.loginUser(loginRequest);
+    }
+
+    public void logoutUser(LogoutData logoutRequest) {
+        users.logoutUser(logoutRequest);
     }
 }

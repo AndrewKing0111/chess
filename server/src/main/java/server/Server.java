@@ -96,7 +96,9 @@ public class Server {
 
     public void logout(Context ctx) {
         var logoutRequest = new Gson().fromJson(ctx.body(), LogoutData.class);
-
+        try {
+            var result = service.logoutUser(logoutRequest);
+        }
     }
 
     public int run(int desiredPort) {
