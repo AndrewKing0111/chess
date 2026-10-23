@@ -44,9 +44,9 @@ public class Server {
     }
 
     public void registerUser(Context ctx) {
-        var request = new Gson().fromJson(ctx.body(), UserData.class);
+        var registerRequest = new Gson().fromJson(ctx.body(), UserData.class);
         try {
-            var result = service.registerUser(request);
+            var result = service.registerUser(registerRequest);
             ctx.status(200);
             var json = new Gson().toJson(result);
             ctx.result(json);
@@ -69,9 +69,9 @@ public class Server {
     }
 
     public void loginUser(Context ctx) {
-        var request = new Gson().fromJson(ctx.body(), LoginData.class);
+        var loginRequest = new Gson().fromJson(ctx.body(), LoginData.class);
         try {
-            var result = service.loginUser(request);
+            var result = service.loginUser(loginRequest);
             ctx.status(200);
             var json = new Gson().toJson(result);
             ctx.result(json);
