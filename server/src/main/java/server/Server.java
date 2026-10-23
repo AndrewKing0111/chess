@@ -99,8 +99,18 @@ public class Server {
         String logoutRequest = ctx.header("authorization");
         try {
             service.logoutUser(logoutRequest);
+            ctx.status(200);
+            ctx.result("{}");
         } catch (DataAccessException error) {
+            var objToSerialize = new ResultError(error);
+            var json = new Gson().toJson(objToSerialize);
+            ctx.result(json);
 
+            if (objToSerialize.getMessage().equals("Error: unauthorized")) {
+                ctx.status(401);
+            } else {
+                ctx.status(500);
+            }
         }
     }
 
