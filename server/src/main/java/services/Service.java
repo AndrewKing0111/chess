@@ -4,6 +4,7 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import model.AuthData;
 import model.UserData;
 
 public class Service {
@@ -24,7 +25,7 @@ public class Service {
         auths.clear();
     }
 
-    public void registerUser(UserData request) throws DataAccessException {
-        users.registerUser(request);
+    public AuthData registerUser(UserData request) throws DataAccessException {
+        return users.registerUser(request);
     }
 }

@@ -43,9 +43,11 @@ public class Server {
         var parser = new Gson();
         var request = parser.fromJson(ctx.body(), UserData.class);
         try {
-            service.registerUser(request);
+            var result = service.registerUser(request);
             ctx.status(200);
-            ctx.json("{}");
+            var serializer = new Gson();
+            var json = serializer.toJson(result);
+            ctx.result(json);
         } catch (DataAccessException error) {
             var serializer = new Gson();
             var objToSerialize = new ResultError(error);
