@@ -26,6 +26,8 @@ public class Server {
 
         javalin.post("/session", this::loginUser);
 
+        javalin.delete("/session", this::logout);
+
     }
 
     public void clear(Context ctx) {
@@ -89,6 +91,10 @@ public class Server {
                     ctx.status(500);
             }
         }
+    }
+
+    public void logout(Context ctx) {
+
     }
 
     public int run(int desiredPort) {
