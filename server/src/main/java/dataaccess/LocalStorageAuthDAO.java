@@ -1,7 +1,7 @@
 package dataaccess;
 
-import kotlin.TuplesKt;
 import model.AuthData;
+import model.LoginData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,25 +13,25 @@ public class LocalStorageAuthDAO implements AuthDAO {
     @Override
     public AuthData createAuth(String username) throws DataAccessException {
         if (username == null) {
-            throw new DataAccessException("Bad request.");
+            throw new DataAccessException("bad request");
         }
 
         if (auths.containsKey(username)) {
-            throw new DataAccessException("Already taken.");
+            throw new DataAccessException("already taken");
         }
 
         try {
             auths.put(username, new AuthData(UUID.randomUUID().toString(), username));
             return auths.get(username);
         } catch (Exception error) {
-            throw new DataAccessException("The server failed to create an authToken for the user.");
+            throw new DataAccessException("the server failed to create an authToken for the user");
         }
 
     }
 
     @Override
-    public AuthData getAuth(String username, String password) throws DataAccessException {
-        return null;
+    public void getAuth(LoginData request) throws DataAccessException {
+
     }
 
     @Override

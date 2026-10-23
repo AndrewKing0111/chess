@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
+import model.LoginData;
 import model.UserData;
 import services.Service;
 
@@ -23,6 +24,8 @@ public class Server {
 
         javalin.post("/user", this::registerUser);
 
+        javalin.post("/session", this::loginUser);
+
     }
 
     public void clear(Context ctx) {
@@ -31,35 +34,56 @@ public class Server {
             ctx.status(200);
             ctx.json("{}");
         } catch (DataAccessException error) {
-            var serializer = new Gson();
             var objToSerialize = new ResultError(error);
-            var json = serializer.toJson(objToSerialize);
+            var json = new Gson().toJson(objToSerialize);
             ctx.status(500);
             ctx.result(json);
         }
     }
 
     public void registerUser(Context ctx) {
-        var parser = new Gson();
-        var request = parser.fromJson(ctx.body(), UserData.class);
+        var request = new Gson().fromJson(ctx.body(), UserData.class);
         try {
             var result = service.registerUser(request);
             ctx.status(200);
-            var serializer = new Gson();
-            var json = serializer.toJson(result);
+            var json = new Gson().toJson(result);
             ctx.result(json);
         } catch (DataAccessException error) {
-            var serializer = new Gson();
             var objToSerialize = new ResultError(error);
-            var json = serializer.toJson(objToSerialize);
+            var json = new Gson().toJson(objToSerialize);
             ctx.result(json);
 
             switch (objToSerialize.getMessage()) {
-                case "Error: Bad request.":
+                case "Error: bad request":
                     ctx.status(400);
                     return;
-                case "Error: Already taken.":
+                case "Error: already taken":
                     ctx.status(403);
+                    return;
+                default:
+                    ctx.status(500);
+            }
+        }
+    }
+
+    public void loginUser(Context ctx) {
+        var request = new Gson().fromJson(ctx.body(), LoginData.class);
+        try {
+            var result = service.loginUser(request);
+            ctx.status(200);
+            var json = new Gson().toJson(result);
+            ctx.result(json);
+        } catch (DataAccessException error) {
+            var objToSerialize = new ResultError(error);
+            var json = new Gson().toJson(objToSerialize);
+            ctx.result(json);
+
+            switch (objToSerialize.getMessage()) {
+                case "Error: bad request":
+                    ctx.status(400);
+                    return;
+                case "Error: unauthorized":
+                    ctx.status(401);
                     return;
                 default:
                     ctx.status(500);

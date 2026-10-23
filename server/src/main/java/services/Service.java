@@ -5,6 +5,7 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
+import model.LoginData;
 import model.UserData;
 
 public class Service {
@@ -27,5 +28,9 @@ public class Service {
 
     public AuthData registerUser(UserData request) throws DataAccessException {
         return users.registerUser(request);
+    }
+
+    public AuthData loginUser(LoginData request) throws DataAccessException{
+        return users.loginUser(request);
     }
 }

@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import model.LoginData;
 import model.UserData;
 
 import java.util.HashMap;
@@ -12,7 +13,7 @@ public class LocalStorageUserDAO implements UserDAO {
     @Override
     public UserData getUserByUsername(String username) throws DataAccessException {
         if (username == null) {
-            throw new DataAccessException("Username is null");
+            throw new DataAccessException("bad request");
         }
         return userDataMap.get(username);
     }
@@ -24,20 +25,39 @@ public class LocalStorageUserDAO implements UserDAO {
         String email = request.email();
 
         if ((username == null) || (password == null) || (email == null)) {
-            throw new DataAccessException("Bad request.");
+            throw new DataAccessException("bad request");
         }
 
         if (userDataMap.containsKey(username)) {
-            throw new DataAccessException("Already taken.");
+            throw new DataAccessException("already taken");
         }
 
         try {
             userDataMap.put(username, new UserData(username, password, email));
-            var authDAO = new LocalStorageAuthDAO();
-            var auth = authDAO.createAuth(username);
+            var auth = new LocalStorageAuthDAO().createAuth(username);
             return auth;
         } catch (Exception error) {
-            throw new DataAccessException("The server failed to register the user.");
+            throw new DataAccessException("the server failed to register the user");
+        }
+    }
+
+    public AuthData loginUser(LoginData request) throws DataAccessException {
+        String username = request.username();
+        String password = request.password();
+
+        if ((username == null) || (password == null)) {
+            throw new DataAccessException("bad request");
+        }
+
+        if (!(userDataMap.containsKey(username))
+        || !(userDataMap.get(username).password().equals(password))) {
+            throw new DataAccessException("unauthorized");
+        }
+
+        try {
+            return new LocalStorageAuthDAO().createAuth(username);
+        } catch (Exception error) {
+            throw new DataAccessException("the server failed to login the user");
         }
     }
 
