@@ -5,6 +5,7 @@ import dataaccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.LoginData;
+import model.LogoutData;
 import model.UserData;
 import services.Service;
 
@@ -94,6 +95,7 @@ public class Server {
     }
 
     public void logout(Context ctx) {
+        var logoutRequest = new Gson().fromJson(ctx.body(), LogoutData.class);
 
     }
 
