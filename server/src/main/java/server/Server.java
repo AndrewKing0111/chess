@@ -25,6 +25,8 @@ public class Server {
         javalin.delete("/session", this::logoutUser);
 
         javalin.post("/game", this::createGame);
+
+        javalin.get("/game", this::listGames);
     }
 
     public void clear(Context ctx) {
@@ -73,20 +75,7 @@ public class Server {
             var json = new Gson().toJson(result);
             ctx.result(json);
         } catch (DataAccessException error) {
-            var objToSerialize = new ResultError(error);
-            var json = new Gson().toJson(objToSerialize);
-            ctx.result(json);
-
-            switch (objToSerialize.getMessage()) {
-                case "Error: bad request":
-                    ctx.status(400);
-                    return;
-                case "Error: unauthorized":
-                    ctx.status(401);
-                    return;
-                default:
-                    ctx.status(500);
-            }
+            setCTXState(ctx, error);
         }
     }
 
@@ -97,15 +86,7 @@ public class Server {
             ctx.status(200);
             ctx.result("{}");
         } catch (DataAccessException error) {
-            var objToSerialize = new ResultError(error);
-            var json = new Gson().toJson(objToSerialize);
-            ctx.result(json);
-
-            if (objToSerialize.getMessage().equals("Error: unauthorized")) {
-                ctx.status(401);
-            } else {
-                ctx.status(500);
-            }
+            setCTXState(ctx, error);
         }
     }
 
@@ -118,20 +99,33 @@ public class Server {
             ctx.status(200);
             ctx.result(new Gson().toJson(new GameID(gameID)));
         } catch (DataAccessException error) {
-            var objToSerialize = new ResultError(error);
-            var json = new Gson().toJson(objToSerialize);
-            ctx.result(json);
+            setCTXState(ctx, error);
+        }
+    }
 
-            switch (objToSerialize.getMessage()) {
-                case "Error: bad request":
-                    ctx.status(400);
-                    return;
-                case "Error: unauthorized":
-                    ctx.status(401);
-                    return;
-                default:
-                    ctx.status(500);
-            }
+    public void listGames(Context ctx) {
+        String authToken = ctx.header("authorization");
+        try {
+            var games = service.listGames(authToken);
+        } catch (DataAccessException error) {
+            setCTXState(ctx, error);
+        }
+    }
+
+    public void setCTXState(Context ctx, DataAccessException error) {
+        var objToSerialize = new ResultError(error);
+        var json = new Gson().toJson(objToSerialize);
+        ctx.result(json);
+
+        switch (objToSerialize.getMessage()) {
+            case "Error: bad request":
+                ctx.status(400);
+                return;
+            case "Error: unauthorized":
+                ctx.status(401);
+                return;
+            default:
+                ctx.status(500);
         }
     }
 

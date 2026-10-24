@@ -37,13 +37,19 @@ public class LocalStorageGameDAO implements GameDAO {
     }
 
     @Override
-    public void joinGame(int gameID, String playerColor) throws DataAccessException {
-
+    public HashSet<GameData> listGames(String authToken) throws DataAccessException {
+        if ((authToken == null) || (gameList == null)) {
+            throw new DataAccessException("bad request");
+        }
+        HashSet<GameData> gameSet = new HashSet<>();
+        for (GameData gameData : gameList.values()) {
+            if
+        }
     }
 
     @Override
-    public HashSet<GameData> listGames(String authToken) throws DataAccessException {
-        return null;
+    public void joinGame(int gameID, String playerColor) throws DataAccessException {
+
     }
 
     @Override
