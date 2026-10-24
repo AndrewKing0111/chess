@@ -28,7 +28,7 @@ public class Server {
 
         javalin.get("/game", this::listGames);
 
-
+        javalin.put("/game", this::joinGame);
     }
 
     public void clear(Context ctx) {
@@ -52,20 +52,7 @@ public class Server {
             var json = new Gson().toJson(result);
             ctx.result(json);
         } catch (DataAccessException error) {
-            var objToSerialize = new ResultError(error);
-            var json = new Gson().toJson(objToSerialize);
-            ctx.result(json);
-
-            switch (objToSerialize.getMessage()) {
-                case "Error: bad request":
-                    ctx.status(400);
-                    return;
-                case "Error: already taken":
-                    ctx.status(403);
-                    return;
-                default:
-                    ctx.status(500);
-            }
+            setCTXState(ctx, error);
         }
     }
 
@@ -94,12 +81,12 @@ public class Server {
 
     public void createGame(Context ctx) {
         String authToken = ctx.header("authorization");
-        var name = new Gson().fromJson(ctx.body(), GameName.class);
-        var gameRequest = new RequestCreateGame(authToken, name.gameName());
+        var name = new Gson().fromJson(ctx.body(), GameNameData.class);
+        var gameRequest = new RequestCreateGame(authToken, name.gameName(), "", "");
         try {
             int gameID = service.createGame(gameRequest);
             ctx.status(200);
-            ctx.result(new Gson().toJson(new GameID(gameID)));
+            ctx.result(new Gson().toJson(new GameIDData(gameID)));
         } catch (DataAccessException error) {
             setCTXState(ctx, error);
         }
@@ -108,9 +95,22 @@ public class Server {
     public void listGames(Context ctx) {
         String authToken = ctx.header("authorization");
         try {
-            var games = new GameList(service.listGames(authToken));
+            var games = new GameListData(service.listGames(authToken));
             ctx.status(200);
             ctx.result(new Gson().toJson(games));
+        } catch (DataAccessException error) {
+            setCTXState(ctx, error);
+        }
+    }
+
+    public void joinGame(Context ctx) {
+        String authToken = ctx.header("authorization");
+        JoinGameData gameData = new Gson().fromJson(ctx.body(), JoinGameData.class);
+        RequestJoinGame joinRequest = new RequestJoinGame(authToken, gameData.playerColor(), gameData.gameID());
+        try {
+            service.joinGame(authToken, joinRequest);
+            ctx.status(200);
+            ctx.result("{}");
         } catch (DataAccessException error) {
             setCTXState(ctx, error);
         }
@@ -127,6 +127,9 @@ public class Server {
                 return;
             case "Error: unauthorized":
                 ctx.status(401);
+                return;
+            case "Error: already taken":
+                ctx.status(403);
                 return;
             default:
                 ctx.status(500);

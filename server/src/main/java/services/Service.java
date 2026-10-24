@@ -44,4 +44,10 @@ public class Service {
         auths.getAuth(authToken);
         return games.listGames(authToken);
     }
+
+    public void joinGame(String authToken, RequestJoinGame joinRequest) throws DataAccessException {
+        auths.getAuth(authToken);
+        String username = auths.getUsername(authToken);
+        games.joinGame(joinRequest, username);
+    }
 }

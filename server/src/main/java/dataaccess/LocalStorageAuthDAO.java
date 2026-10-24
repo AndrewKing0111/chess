@@ -56,6 +56,19 @@ public class LocalStorageAuthDAO implements AuthDAO {
         throw new DataAccessException("unauthorized");
     }
 
+    public String getUsername(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("bad request");
+        }
+
+        for (Map.Entry<String, AuthData> entry : auths.entrySet()) {
+            if (entry.getValue().authToken().equals(authToken)) {
+                return entry.getKey();
+            }
+        }
+        throw new DataAccessException("the server could not find the user");
+    }
+
     @Override
     public void clear() throws DataAccessException {
         auths.clear();

@@ -2,7 +2,9 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.GameData;
+import model.JoinGameData;
 import model.RequestCreateGame;
+import model.RequestJoinGame;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,13 +23,15 @@ public class LocalStorageGameDAO implements GameDAO {
     public int createGame(RequestCreateGame gameRequest) throws DataAccessException {
         String authToken = gameRequest.authToken();
         String gameName = gameRequest.gameName();
+        String whiteUserName = gameRequest.whiteUserName();
+        String blackUserName = gameRequest.blackUserName();
 
         if ((authToken == null) || (gameName == null)) {
             throw new DataAccessException("bad request");
         }
 
         ChessGame chessGame = new ChessGame();
-        GameData game = new GameData(counter, null, null, gameName, chessGame);
+        GameData game = new GameData(counter, whiteUserName, blackUserName, gameName, chessGame);
         try {
             gameList.put(counter, game);
             return counter++;
@@ -46,13 +50,41 @@ public class LocalStorageGameDAO implements GameDAO {
     }
 
     @Override
-    public void joinGame(int gameID, String playerColor) throws DataAccessException {
+    public void joinGame(RequestJoinGame joinRequest, String username) throws DataAccessException {
+        String authToken = joinRequest.authToken();
+        int gameID = joinRequest.gameID();
+        String playerColor = joinRequest.playerColor();
 
+        if ((gameID < 1) || (playerColor == null)) {
+            throw new DataAccessException("bad request");
+        }
+
+        GameData game = gameList.get(gameID);
+        switch (playerColor) {
+            case "WHITE":
+                if (!(game.whiteUserName().isEmpty())) {
+                    throw new DataAccessException("already taken");
+                }
+
+                counter--;
+                createGame(new RequestCreateGame(authToken, game.gameName(), username, game.blackUserName()));
+                return;
+            case "BLACK":
+                if (!(game.blackUserName().isEmpty())) {
+                    throw new DataAccessException("already taken");
+                }
+
+                counter--;
+                createGame(new RequestCreateGame(authToken, game.gameName(), game.whiteUserName(), username));
+                return;
+            default:
+                throw new DataAccessException("bad request");
+        }
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        return null;
+        return gameList.get(gameID);
     }
 
     @Override
