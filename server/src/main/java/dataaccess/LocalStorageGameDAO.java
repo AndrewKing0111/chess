@@ -65,7 +65,6 @@ public class LocalStorageGameDAO implements GameDAO {
                 if (!(game.whiteUserName().isEmpty())) {
                     throw new DataAccessException("already taken");
                 }
-
                 counter--;
                 createGame(new RequestCreateGame(authToken, game.gameName(), username, game.blackUserName()));
                 return;
@@ -73,7 +72,6 @@ public class LocalStorageGameDAO implements GameDAO {
                 if (!(game.blackUserName().isEmpty())) {
                     throw new DataAccessException("already taken");
                 }
-
                 counter--;
                 createGame(new RequestCreateGame(authToken, game.gameName(), game.whiteUserName(), username));
                 return;

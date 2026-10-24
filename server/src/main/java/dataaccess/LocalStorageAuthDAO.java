@@ -3,11 +3,12 @@ package dataaccess;
 import model.AuthData;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 
 public class LocalStorageAuthDAO implements AuthDAO {
-    private Map<String, AuthData> auths = new HashMap<>();
+    private HashSet<AuthData> auths = new HashSet<>();
 
     @Override
     public AuthData createAuth(String username) throws DataAccessException {
@@ -15,13 +16,10 @@ public class LocalStorageAuthDAO implements AuthDAO {
             throw new DataAccessException("bad request");
         }
 
-        if (auths.containsKey(username)) {
-            auths.remove(username);
-        }
-
         try {
-            auths.put(username, new AuthData(UUID.randomUUID().toString(), username));
-            return auths.get(username);
+            AuthData newAuth = new AuthData(UUID.randomUUID().toString(), username);
+            auths.add(newAuth);
+            return newAuth;
         } catch (Exception error) {
             throw new DataAccessException("the server failed to create an authToken for the user");
         }
@@ -31,16 +29,18 @@ public class LocalStorageAuthDAO implements AuthDAO {
     @Override
     public void logoutUser(String authToken) throws DataAccessException {
         String username = "";
-        for (Map.Entry<String, AuthData> entry : auths.entrySet()) {
-            if (entry.getValue().authToken().equals(authToken)) {
-                username = entry.getKey();
+        AuthData authToRemove = new AuthData("", "");
+        for (AuthData auth : auths) {
+            if (auth.authToken().equals(authToken)) {
+                username = auth.username();
+                authToRemove = auth;
             }
         }
         if (username.isEmpty()) {
             throw new DataAccessException("unauthorized");
         } else {
             try {
-                auths.remove(username);
+                auths.remove(authToRemove);
             } catch (Exception error) {
                 throw new DataAccessException("the server failed logout the user");
             }
@@ -48,9 +48,9 @@ public class LocalStorageAuthDAO implements AuthDAO {
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException {
-        for (Map.Entry<String, AuthData> entry : auths.entrySet()) {
-            if (entry.getValue().authToken().equals(authToken)) {
-                return entry.getValue();
+        for (AuthData auth : auths) {
+            if (auth.authToken().equals(authToken)) {
+                return auth;
             }
         }
         throw new DataAccessException("unauthorized");
@@ -61,9 +61,9 @@ public class LocalStorageAuthDAO implements AuthDAO {
             throw new DataAccessException("bad request");
         }
 
-        for (Map.Entry<String, AuthData> entry : auths.entrySet()) {
-            if (entry.getValue().authToken().equals(authToken)) {
-                return entry.getKey();
+        for (AuthData auth : auths) {
+            if (auth.authToken().equals(authToken)) {
+                return auth.username();
             }
         }
         throw new DataAccessException("the server could not find the user");
