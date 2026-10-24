@@ -3,6 +3,9 @@ package services;
 import dataaccess.*;
 import model.*;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class Service {
 
     private LocalStorageUserDAO users = new LocalStorageUserDAO();
@@ -35,5 +38,10 @@ public class Service {
     public int createGame(RequestCreateGame gameRequest) throws DataAccessException {
         auths.getAuth(gameRequest.authToken());
         return games.createGame(gameRequest);
+    }
+
+    public HashSet<GameData> listGames(String authToken) throws DataAccessException {
+        auths.getAuth(authToken);
+        return games.listGames(authToken);
     }
 }
