@@ -41,10 +41,8 @@ public class LocalStorageGameDAO implements GameDAO {
         if ((authToken == null) || (gameList == null)) {
             throw new DataAccessException("bad request");
         }
-        HashSet<GameData> gameSet = new HashSet<>();
-        for (GameData gameData : gameList.values()) {
-            if
-        }
+        HashSet<GameData> gameSet = new HashSet<>(gameList.values());
+        return gameSet;
     }
 
     @Override

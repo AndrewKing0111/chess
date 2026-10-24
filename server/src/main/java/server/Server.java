@@ -27,6 +27,8 @@ public class Server {
         javalin.post("/game", this::createGame);
 
         javalin.get("/game", this::listGames);
+
+
     }
 
     public void clear(Context ctx) {
@@ -106,7 +108,9 @@ public class Server {
     public void listGames(Context ctx) {
         String authToken = ctx.header("authorization");
         try {
-            var games = service.listGames(authToken);
+            var games = new GameList(service.listGames(authToken));
+            ctx.status(200);
+            ctx.result(new Gson().toJson(games));
         } catch (DataAccessException error) {
             setCTXState(ctx, error);
         }
