@@ -23,16 +23,13 @@ public class ServiceTests {
         try {
             service.clear();
         } catch (DataAccessException error) {
-            assertTrue(false);
+            fail();
         }
-        assertTrue(true);
     }
 
     @Test
-    void registerUser() {
-        var service = new Service();
+    void registerTwice() {
         var goodData = new UserData("username", "password", "email");
-        var badData = new UserData("", "password", "email");
         AuthData result = null;
         try {
             result = service.registerUser(goodData);
@@ -42,10 +39,24 @@ public class ServiceTests {
         assertEquals("username", result.username());
 
         try {
+            service.registerUser(goodData);
+        } catch (DataAccessException error) {
+            assertEquals("already taken", error.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    void register() {
+        var badData = new UserData(null, "password", "email");
+        try {
             service.registerUser(badData);
         } catch (DataAccessException error) {
-            fail();
+            assertEquals("bad request", error.getMessage());
+            return;
         }
+        fail();
     }
 
     @Test
