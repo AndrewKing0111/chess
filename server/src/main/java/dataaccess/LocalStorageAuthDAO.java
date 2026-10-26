@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class LocalStorageAuthDAO implements AuthDAO {
-    private HashSet<AuthData> auths = new HashSet<>();
+    private Map<String, AuthData> auths = new HashMap<>();
 
     @Override
     public AuthData createAuth(String username) throws DataAccessException {
@@ -17,8 +17,9 @@ public class LocalStorageAuthDAO implements AuthDAO {
         }
 
         try {
-            AuthData newAuth = new AuthData(UUID.randomUUID().toString(), username);
-            auths.add(newAuth);
+            String authToken = UUID.randomUUID().toString();
+            AuthData newAuth = new AuthData(authToken, username);
+            auths.put(authToken, newAuth);
             return newAuth;
         } catch (Exception error) {
             throw new DataAccessException("the server failed to create an authToken for the user");
@@ -28,32 +29,27 @@ public class LocalStorageAuthDAO implements AuthDAO {
 
     @Override
     public void logoutUser(String authToken) throws DataAccessException {
-        String username = "";
-        AuthData authToRemove = new AuthData("", "");
-        for (AuthData auth : auths) {
-            if (auth.authToken().equals(authToken)) {
-                username = auth.username();
-                authToRemove = auth;
-            }
-        }
-        if (username.isEmpty()) {
+        if (!(auths.containsKey(authToken))) {
             throw new DataAccessException("unauthorized");
-        } else {
-            try {
-                auths.remove(authToRemove);
-            } catch (Exception error) {
-                throw new DataAccessException("the server failed logout the user");
-            }
+        }
+
+        try {
+            auths.remove(authToken);
+        } catch (Exception error) {
+            throw new DataAccessException("the server failed logout the user");
         }
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException {
-        for (AuthData auth : auths) {
-            if (auth.authToken().equals(authToken)) {
-                return auth;
-            }
+        if (!(auths.containsKey(authToken))) {
+            throw new DataAccessException("unauthorized");
         }
-        throw new DataAccessException("unauthorized");
+
+        try {
+            return auths.get(authToken);
+        } catch (Exception error) {
+            throw new DataAccessException("the server failed to process the authorization");
+        }
     }
 
     public String getUsername(String authToken) throws DataAccessException {
@@ -61,12 +57,11 @@ public class LocalStorageAuthDAO implements AuthDAO {
             throw new DataAccessException("bad request");
         }
 
-        for (AuthData auth : auths) {
-            if (auth.authToken().equals(authToken)) {
-                return auth.username();
-            }
+        try {
+            return auths.get(authToken).username();
+        } catch (Exception error) {
+            throw new DataAccessException("the server could not find the user");
         }
-        throw new DataAccessException("the server could not find the user");
     }
 
     @Override

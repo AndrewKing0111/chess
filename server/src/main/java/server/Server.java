@@ -108,7 +108,7 @@ public class Server {
         JoinGameData gameData = new Gson().fromJson(ctx.body(), JoinGameData.class);
         RequestJoinGame joinRequest = new RequestJoinGame(authToken, gameData.playerColor(), gameData.gameID());
         try {
-            service.joinGame(authToken, joinRequest);
+            service.joinGame(joinRequest);
             ctx.status(200);
             ctx.result("{}");
         } catch (DataAccessException error) {
