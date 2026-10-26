@@ -1,10 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.GameData;
-import model.JoinGameData;
-import model.RequestCreateGame;
-import model.RequestJoinGame;
+import model.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,12 +38,11 @@ public class LocalStorageGameDAO implements GameDAO {
     }
 
     @Override
-    public HashSet<GameData> listGames(String authToken) throws DataAccessException {
+    public GameListData listGames(String authToken) throws DataAccessException {
         if ((authToken == null) || (gameList == null)) {
             throw new DataAccessException("bad request");
         }
-        HashSet<GameData> gameSet = new HashSet<>(gameList.values());
-        return gameSet;
+        return new GameListData(new HashSet<>(gameList.values()));
     }
 
     @Override
@@ -62,18 +58,18 @@ public class LocalStorageGameDAO implements GameDAO {
         GameData game = gameList.get(gameID);
         switch (playerColor) {
             case "WHITE":
-                if (!(game.whiteUserName().isEmpty())) {
+                if (game.whiteUsername() != null) {
                     throw new DataAccessException("already taken");
                 }
                 counter--;
-                createGame(new RequestCreateGame(authToken, game.gameName(), username, game.blackUserName()));
+                createGame(new RequestCreateGame(authToken, game.gameName(), username, game.blackUsername()));
                 return;
             case "BLACK":
-                if (!(game.blackUserName().isEmpty())) {
+                if (game.blackUsername() != null) {
                     throw new DataAccessException("already taken");
                 }
                 counter--;
-                createGame(new RequestCreateGame(authToken, game.gameName(), game.whiteUserName(), username));
+                createGame(new RequestCreateGame(authToken, game.gameName(), game.whiteUsername(), username));
                 return;
             default:
                 throw new DataAccessException("bad request");

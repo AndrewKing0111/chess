@@ -82,7 +82,7 @@ public class Server {
     public void createGame(Context ctx) {
         String authToken = ctx.header("authorization");
         var name = new Gson().fromJson(ctx.body(), GameNameData.class);
-        var gameRequest = new RequestCreateGame(authToken, name.gameName(), "", "");
+        var gameRequest = new RequestCreateGame(authToken, name.gameName(), null, null);
         try {
             int gameID = service.createGame(gameRequest);
             ctx.status(200);
@@ -95,7 +95,7 @@ public class Server {
     public void listGames(Context ctx) {
         String authToken = ctx.header("authorization");
         try {
-            var games = new GameListData(service.listGames(authToken));
+            var games = service.listGames(authToken);
             ctx.status(200);
             ctx.result(new Gson().toJson(games));
         } catch (DataAccessException error) {

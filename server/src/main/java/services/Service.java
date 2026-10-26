@@ -3,7 +3,6 @@ package services;
 import dataaccess.*;
 import model.*;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 public class Service {
@@ -40,14 +39,13 @@ public class Service {
         return games.createGame(gameRequest);
     }
 
-    public HashSet<GameData> listGames(String authToken) throws DataAccessException {
+    public GameListData listGames(String authToken) throws DataAccessException {
         auths.getAuth(authToken);
         return games.listGames(authToken);
     }
 
     public void joinGame(RequestJoinGame joinRequest) throws DataAccessException {
         auths.getAuth(joinRequest.authToken());
-        String username = auths.getUsername(joinRequest.authToken());
-        games.joinGame(joinRequest, username);
+        games.joinGame(joinRequest, auths.getUsername(joinRequest.authToken()));
     }
 }
