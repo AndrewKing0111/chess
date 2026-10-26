@@ -1,9 +1,8 @@
-package dataaccess;
+package dataAccess;
 
 import model.AuthData;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 

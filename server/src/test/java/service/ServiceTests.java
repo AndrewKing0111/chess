@@ -1,12 +1,13 @@
 package service;
 
-import dataaccess.DataAccessException;
+import chess.ChessGame;
+import dataAccess.DataAccessException;
 import model.UserData;
-import org.eclipse.jetty.util.log.Log;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import services.Service;
 import model.*;
+
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +30,21 @@ public class ServiceTests {
         }
         return auth.authToken();
     }
+
+    public HashSet<GameData> createGoodGames(int num, String authToken) {
+        HashSet<GameData> games = new HashSet<>();
+        for (int i=1; i<=num; i++) {
+            var validGameRequest = new RequestCreateGame(authToken, Integer.toString(i), null, null);
+            games.add(new GameData(i, null, null, Integer.toString(i), new ChessGame()));
+            try {
+                service.createGame(validGameRequest);
+            } catch (DataAccessException error) {
+                fail();
+            }
+        }
+        return games;
+    }
+
     @Test
     void clear() {
         try {
@@ -141,6 +157,51 @@ public class ServiceTests {
             fail();
         }
         assertEquals(1, gameID);
+    }
+
+    @Test
+    void createBadGame() {
+        String authToken = registerGoodUser();
+        var invalidGameRequest = new RequestCreateGame(authToken, null, null, null);
+        int gameID = 0;
+        try {
+            gameID = service.createGame(invalidGameRequest);
+        } catch (DataAccessException error) {
+            assertEquals("bad request", error.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    void listGames() {
+        String authToken = registerGoodUser();
+        HashSet<GameData> expectedGames = createGoodGames(5, authToken);
+        GameListData resultGames = null;
+        try {
+            resultGames = service.listGames(authToken);
+        } catch (DataAccessException error) {
+            fail();
+        }
+        assertEquals(expectedGames, resultGames.games());
+    }
+
+    @Test
+    void joinGame() {
+        String authToken = registerGoodUser();
+        createGoodGames(1, authToken);
+        try {
+            service.joinGame(new RequestJoinGame(authToken, "WHITE", 1));
+        } catch (DataAccessException error) {
+            fail();
+        }
+
+        GameListData game = null;
+        try {
+            game = service.listGames(authToken);
+        } catch (DataAccessException error) {
+            fail();
+        }
     }
 
 }

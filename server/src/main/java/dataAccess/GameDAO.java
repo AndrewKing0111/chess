@@ -1,8 +1,6 @@
-package dataaccess;
+package dataAccess;
 
 import model.*;
-
-import java.util.HashSet;
 
 public interface GameDAO {
     int createGame(RequestCreateGame gameRequest) throws DataAccessException;

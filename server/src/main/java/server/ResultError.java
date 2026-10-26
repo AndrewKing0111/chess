@@ -1,6 +1,6 @@
 package server;
 
-import dataaccess.DataAccessException;
+import dataAccess.DataAccessException;
 
 public class ResultError {
     private String message;

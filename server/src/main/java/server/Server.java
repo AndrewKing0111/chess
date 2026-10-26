@@ -1,11 +1,11 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.*;
+import dataAccess.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.*;
-import services.Service;
+import service.Service;
 
 public class Server {
 

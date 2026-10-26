@@ -1,6 +1,6 @@
-package services;
+package service;
 
-import dataaccess.*;
+import dataAccess.*;
 import model.*;
 
 
