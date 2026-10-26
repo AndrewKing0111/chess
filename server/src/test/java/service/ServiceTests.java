@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import model.UserData;
+import org.eclipse.jetty.util.log.Log;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import services.Service;
@@ -18,6 +19,16 @@ public class ServiceTests {
         service = new Service();
     }
 
+    public String registerGoodUser() {
+        AuthData auth = null;
+        var registerData = new UserData("username", "password", "email");
+        try {
+            auth = service.registerUser(registerData);
+        } catch (DataAccessException error) {
+            fail();
+        }
+        return auth.authToken();
+    }
     @Test
     void clear() {
         try {
@@ -48,7 +59,7 @@ public class ServiceTests {
     }
 
     @Test
-    void register() {
+    void badRegister() {
         var badData = new UserData(null, "password", "email");
         try {
             service.registerUser(badData);
@@ -61,7 +72,75 @@ public class ServiceTests {
 
     @Test
     void loginUser() {
+        registerGoodUser();
 
+        AuthData auth1 = null;
+        var goodLoginData = new LoginData("username", "password");
+        try {
+            auth1 = service.loginUser(goodLoginData);
+        } catch (DataAccessException error) {
+            fail();
+        }
+        assertNotNull(auth1.authToken());
+
+        AuthData auth2 = null;
+        try {
+            auth2 = service.loginUser(goodLoginData);
+        } catch (DataAccessException error) {
+            fail();
+        }
+        assertNotEquals(auth1, auth2);
+    }
+
+    @Test
+    void badPasswordLogin() {
+        registerGoodUser();
+
+        var badPasswordLoginData = new LoginData("username", null);
+        try {
+            service.loginUser(badPasswordLoginData);
+        } catch (DataAccessException error) {
+            assertEquals("bad request", error.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    void badUsernameLogin() {
+        registerGoodUser();
+
+        var badPasswordLoginData = new LoginData("username1", "password");
+        try {
+            service.loginUser(badPasswordLoginData);
+        } catch (DataAccessException error) {
+            assertEquals("unauthorized", error.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    void logoutUser() {
+        String authToken = registerGoodUser();
+        try {
+            service.logoutUser(authToken);
+        } catch (DataAccessException error) {
+            fail();
+        }
+    }
+
+    @Test
+    void createValidGame() {
+        String authToken = registerGoodUser();
+        var validGameRequest = new RequestCreateGame(authToken, "game", null, null);
+        int gameID = 0;
+        try {
+            gameID = service.createGame(validGameRequest);
+        } catch (DataAccessException error) {
+            fail();
+        }
+        assertEquals(1, gameID);
     }
 
 }
