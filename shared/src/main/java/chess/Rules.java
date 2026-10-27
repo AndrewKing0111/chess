@@ -1,6 +1,9 @@
 package chess;
 
+import chessmoves.*;
+
 import java.util.HashMap;
+
 import static chess.ChessPiece.PieceType.*;
 
 public class Rules {
