@@ -1,7 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataAccess.DataAccessException;
+import dataaccess.DataAccessException;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class ServiceTests {
 
     public HashSet<GameData> createGoodGames(int num, String authToken) {
         HashSet<GameData> games = new HashSet<>();
-        for (int i=1; i<=num; i++) {
+        for (int i = 1; i <= num; i++) {
             var validGameRequest = new RequestCreateGame(authToken, Integer.toString(i), null, null);
             games.add(new GameData(i, null, null, Integer.toString(i), new ChessGame()));
             try {

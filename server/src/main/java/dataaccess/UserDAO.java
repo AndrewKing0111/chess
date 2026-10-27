@@ -1,4 +1,4 @@
-package dataAccess;
+package dataaccess;
 
 import model.LoginData;
 import model.UserData;
