@@ -7,24 +7,29 @@ import model.GameListData;
 import model.RequestCreateGame;
 import model.RequestJoinGame;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public class DatabaseGameDAO implements GameDAO {
 
     public DatabaseGameDAO() throws DataAccessException {
-        var db = new DatabaseManager();
-        try {
-            db.configureDatabase("""
-            CREATE TABLE IF NOT EXISTS games (
-            `gameID` int NOT NULL AUTO_INCREMENT,
-            `whiteUsername` varchar(256) NOT NULL,
-            `blackUsername` varchar(256) NOT NULL,
-            `gameName` varchar(256) NOT NULL,
-            `game` TEXT NOT NULL,
-            
-            INDEX(gameID)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """);
-        } catch (Exception error) {
-            throw new DataAccessException("the server failed to initialize the database");
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String configStatement = """
+                    CREATE TABLE IF NOT EXISTS games (
+                      `gameID` int NOT NULL AUTO_INCREMENT,
+                      `whiteUsername` varchar(256) NOT NULL,
+                      `blackUsername` varchar(256) NOT NULL,
+                      `gameName` varchar(256) NOT NULL,
+                      `game` TEXT NOT NULL,
+                    
+                    INDEX(gameID)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+                    """;
+            try (var preparedStatement = conn.prepareStatement(configStatement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 

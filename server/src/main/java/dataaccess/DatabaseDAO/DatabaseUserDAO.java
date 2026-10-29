@@ -11,19 +11,17 @@ import java.sql.SQLException;
 
 public class DatabaseUserDAO implements UserDAO {
 
-    private final String configStatement =
-            """
-            CREATE TABLE IF NOT EXISTS users (
-              `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`),
-              UNIQUE(username)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """;
-
     public DatabaseUserDAO() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
+            String configStatement = """
+                    CREATE TABLE IF NOT EXISTS users (
+                      `username` varchar(256) NOT NULL,
+                      `password` varchar(256) NOT NULL,
+                      `email` varchar(256) NOT NULL,
+                      PRIMARY KEY (`username`),
+                      UNIQUE(username)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+                    """;
             try (var preparedStatement = conn.prepareStatement(configStatement)) {
                 preparedStatement.executeUpdate();
             }
