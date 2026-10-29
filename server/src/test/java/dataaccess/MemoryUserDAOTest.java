@@ -1,5 +1,6 @@
 package dataaccess;
 
+import dataaccess.LocalStorageDAO.LocalStorageUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.Test;
 

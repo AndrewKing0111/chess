@@ -1,4 +1,7 @@
-package dataaccess;
+package dataaccess.DatabaseDAO;
+
+import dataaccess.DataAccessException;
+import dataaccess.ResponseException;
 
 import java.sql.*;
 import java.util.Properties;
@@ -29,46 +32,12 @@ public class DatabaseManager {
         }
     }
 
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS users (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(username),
-              INDEX(password)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """,
-            """
-            CREATE TABLE IF NOT EXISTS auths (
-            `authToken` varchar(256) NOT NULL,
-            `AuthData` TEXT NOT NULL,
-            PRIMARY KEY (`authToken`),
-            INDEX(authToken)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """,
-            """
-            CREATE TABLE IF NOT EXISTS games (
-            `gameID` int NOT NULL AUTO_INCREMENT,
-            `whiteUsername` varchar(256) NOT NULL,
-            `blackUsername` varchar(256) NOT NULL,
-            `gameName` varchar(256) NOT NULL,
-            `game` TEXT NOT NULL,
-            INDEX(gameID)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
 
-
-    private void configureDatabase() throws ResponseException, DataAccessException {
+    public void configureDatabase(String configStatement) throws ResponseException, DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
+            try (var preparedStatement = conn.prepareStatement(configStatement)) {
+                preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new ResponseException(ResponseException.Code.ServerError, String.format("Unable to configure database: %s", ex.getMessage()));

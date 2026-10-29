@@ -1,6 +1,9 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.LocalStorageDAO.LocalStorageAuthDAO;
+import dataaccess.LocalStorageDAO.LocalStorageGameDAO;
+import dataaccess.LocalStorageDAO.LocalStorageUserDAO;
 import model.*;
 
 
