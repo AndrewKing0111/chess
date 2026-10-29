@@ -17,7 +17,11 @@ public class ServiceTests {
 
     @BeforeEach
     public void setup() {
-        service = new Service();
+        try {
+            service = new Service();
+        } catch (Exception error) {
+            fail();
+        }
     }
 
     public String registerGoodUser() {

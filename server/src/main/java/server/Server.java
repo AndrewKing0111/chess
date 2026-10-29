@@ -10,9 +10,9 @@ import service.Service;
 public class Server {
 
     private final Javalin javalin;
-    private Service service = new Service();
+    private final Service service = new Service();
 
-    public Server() {
+    public Server() throws DataAccessException{
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.

@@ -6,12 +6,13 @@ import dataaccess.UserDAO;
 import model.LoginData;
 import model.UserData;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public class DatabaseUserDAO implements UserDAO {
 
-    public DatabaseUserDAO() throws DataAccessException {
-        var db = new DatabaseManager();
-        try {
-            db.configureDatabase("""
+    private final String configStatement =
+            """
             CREATE TABLE IF NOT EXISTS users (
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
@@ -19,9 +20,15 @@ public class DatabaseUserDAO implements UserDAO {
               PRIMARY KEY (`username`),
               UNIQUE(username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """);
-        } catch (Exception error) {
-            throw new DataAccessException("the server failed to initialize the database");
+            """;
+
+    public DatabaseUserDAO() throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(configStatement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 
