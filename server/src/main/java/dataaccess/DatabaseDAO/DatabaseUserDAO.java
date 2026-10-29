@@ -33,22 +33,50 @@ public class DatabaseUserDAO implements UserDAO {
 
     @Override
     public UserData getUserByUsername(String username) throws DataAccessException {
+        if (username == null) {
+            throw new DataAccessException("bad request");
+        }
+
         try (Connection conn = DatabaseManager.getConnection()) {
             var preparedStatement = conn.prepareStatement("SELECT * FROM users WHERE username = ?", Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, username);
-            preparedStatement.execute();
-
-            var resultSet = preparedStatement.getGeneratedKeys();
-
-        } catch (Exception error) {
-
+            var results = preparedStatement.executeQuery();
+            if (results.next()) {
+                return new UserData(
+                        results.getString("username"),
+                        results.getString("password"),
+                        results.getString("email")
+                );
+            } else {
+                throw new DataAccessException("bad request");
+            }
+        } catch (SQLException error) {
+            throw new DataAccessException("the server failed to access the database");
         }
-        return null;
     }
 
     @Override
     public void registerUser(UserData request) throws DataAccessException {
+        String username = request.username();
+        String password = request.password();
+        String email = request.email();
 
+        if ((username == null) || (password == null) || (email == null)) {
+            throw new DataAccessException("bad request");
+        }
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var preparedStatement = conn.prepareStatement("INSERT INTO users VALUES (?, ?, ?)");
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            preparedStatement.setString(3, email);
+        } catch (SQLException error) {
+            if (error.getMessage().contains("Duplicate")) {
+                throw new DataAccessException("already taken");
+            } else {
+                throw new DataAccessException("the server failed to register the user");
+            }
+        }
     }
 
     @Override
@@ -65,7 +93,7 @@ public class DatabaseUserDAO implements UserDAO {
             var resultSet = preparedStatement.getGeneratedKeys();
 
         } catch (Exception error) {
-
+            throw new DataAccessException("the server failed to clear the database");
         }
     }
 
