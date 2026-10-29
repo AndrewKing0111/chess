@@ -3,6 +3,7 @@ package service;
 import dataaccess.*;
 import dataaccess.DatabaseDAO.DatabaseAuthDAO;
 import dataaccess.DatabaseDAO.DatabaseGameDAO;
+import dataaccess.DatabaseDAO.DatabaseManager;
 import dataaccess.DatabaseDAO.DatabaseUserDAO;
 import dataaccess.LocalStorageDAO.LocalStorageAuthDAO;
 import dataaccess.LocalStorageDAO.LocalStorageGameDAO;
@@ -12,16 +13,21 @@ import model.*;
 
 public class Service {
 
-//    private final LocalStorageUserDAO users = new LocalStorageUserDAO();
-//    private final LocalStorageGameDAO games = new LocalStorageGameDAO();
 //    private final LocalStorageAuthDAO auths = new LocalStorageAuthDAO();
+//    private final LocalStorageGameDAO games = new LocalStorageGameDAO();
+//    private final LocalStorageUserDAO users = new LocalStorageUserDAO();
 
-    private final DatabaseUserDAO users = new DatabaseUserDAO();
-    private final DatabaseAuthDAO auths = new DatabaseAuthDAO();
-    private final DatabaseGameDAO games = new DatabaseGameDAO();
+    private final DatabaseAuthDAO auths;
+    private final DatabaseGameDAO games;
+    private final DatabaseUserDAO users;
 
 
-    public Service() throws DataAccessException {}
+    public Service() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        this.auths = new DatabaseAuthDAO();
+        this.games = new DatabaseGameDAO();
+        this.users = new DatabaseUserDAO();
+    }
 
     public void clear() throws DataAccessException {
         users.clear();

@@ -11,7 +11,7 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ServiceTests {
+public class MemoryServiceTests {
 
     private static Service service;
 

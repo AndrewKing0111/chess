@@ -58,7 +58,15 @@ public class DatabaseUserDAO implements UserDAO {
 
     @Override
     public void clear() throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var preparedStatement = conn.prepareStatement("DROP ALL TABLES");
+            preparedStatement.execute();
 
+            var resultSet = preparedStatement.getGeneratedKeys();
+
+        } catch (Exception error) {
+
+        }
     }
 
     private void executeQuery(String query) throws ResponseException, DataAccessException {
