@@ -17,19 +17,24 @@ public class LocalStorageAuthDAO implements AuthDAO {
             throw new DataAccessException("bad request");
         }
 
+        String authToken = UUID.randomUUID().toString();
+        AuthData newAuth = new AuthData(authToken, username);
+
         try {
-            String authToken = UUID.randomUUID().toString();
-            AuthData newAuth = new AuthData(authToken, username);
             auths.put(authToken, newAuth);
-            return newAuth;
+
         } catch (Exception error) {
             throw new DataAccessException("the server failed to create an authToken for the user");
         }
-
+        return newAuth;
     }
 
     @Override
     public void logoutUser(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("bad request");
+        }
+
         if (!(auths.containsKey(authToken))) {
             throw new DataAccessException("unauthorized");
         }
@@ -42,6 +47,10 @@ public class LocalStorageAuthDAO implements AuthDAO {
     }
 
     public AuthData getAuth(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("bad request");
+        }
+
         if (!(auths.containsKey(authToken))) {
             throw new DataAccessException("unauthorized");
         }

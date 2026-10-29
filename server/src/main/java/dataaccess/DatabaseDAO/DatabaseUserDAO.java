@@ -105,7 +105,7 @@ public class DatabaseUserDAO implements UserDAO {
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var preparedStatement = conn.prepareStatement("DROP ALL TABLES");
+            var preparedStatement = conn.prepareStatement("DROP TABLE users");
             preparedStatement.execute();
 
             var resultSet = preparedStatement.getGeneratedKeys();
