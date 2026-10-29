@@ -5,6 +5,7 @@ import dataaccess.ResponseException;
 import dataaccess.UserDAO;
 import model.LoginData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -40,12 +41,12 @@ public class DatabaseUserDAO implements UserDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             var preparedStatement = conn.prepareStatement("SELECT * FROM users WHERE username = ?", Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, username);
-            var results = preparedStatement.executeQuery();
-            if (results.next()) {
+            var result = preparedStatement.executeQuery();
+            if (result.next()) {
                 return new UserData(
-                        results.getString("username"),
-                        results.getString("password"),
-                        results.getString("email")
+                        result.getString("username"),
+                        result.getString("password"),
+                        result.getString("email")
                 );
             } else {
                 throw new DataAccessException("bad request");
@@ -65,10 +66,12 @@ public class DatabaseUserDAO implements UserDAO {
             throw new DataAccessException("bad request");
         }
 
+        String hash = BCrypt.hashpw(password, BCrypt.gensalt());
+
         try (Connection conn = DatabaseManager.getConnection()) {
             var preparedStatement = conn.prepareStatement("INSERT INTO users VALUES (?, ?, ?)");
             preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
+            preparedStatement.setString(2, hash);
             preparedStatement.setString(3, email);
         } catch (SQLException error) {
             if (error.getMessage().contains("Duplicate")) {
@@ -81,7 +84,22 @@ public class DatabaseUserDAO implements UserDAO {
 
     @Override
     public void loginUser(LoginData request) throws DataAccessException {
+        String username = request.username();
+        String password = request.password();
 
+        if ((username == null) || (password == null)) {
+            throw new DataAccessException("bad request");
+        }
+
+        String hash = BCrypt.hashpw(password, BCrypt.gensalt());
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var preparedStatement = conn.prepareStatement("SELECT password FROM users WHERE username = ?");
+            preparedStatement.setString(1, hash);
+            preparedStatement.executeQuery();
+        } catch (SQLException error) {
+            throw new DataAccessException("unauthorized");
+        }
     }
 
     @Override
