@@ -8,6 +8,7 @@ import model.UserData;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DatabaseUserDAO implements UserDAO {
 
@@ -32,6 +33,16 @@ public class DatabaseUserDAO implements UserDAO {
 
     @Override
     public UserData getUserByUsername(String username) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var preparedStatement = conn.prepareStatement("SELECT * FROM users WHERE username = ?", Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, username);
+            preparedStatement.execute();
+
+            var resultSet = preparedStatement.getGeneratedKeys();
+
+        } catch (Exception error) {
+
+        }
         return null;
     }
 
