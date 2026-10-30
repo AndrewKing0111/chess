@@ -1,4 +1,4 @@
-package dataaccess.DatabaseDAO;
+package dataaccess.database;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
@@ -7,7 +7,6 @@ import model.AuthData;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.UUID;
 
 public class DatabaseAuthDAO implements AuthDAO {

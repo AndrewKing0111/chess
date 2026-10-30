@@ -1,6 +1,6 @@
 package dataaccess;
 
-import dataaccess.LocalStorageDAO.LocalStorageUserDAO;
+import dataaccess.memory.MemoryUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ class MemoryUserDAOTest {
     @Test
     void createUser() throws DataAccessException {
         assertTrue(true);
-        var userDAO = new LocalStorageUserDAO();
+        var userDAO = new MemoryUserDAO();
         var user = userDAO.getUserByUsername("a");
         assertEquals(new UserData("ax", "1", "a"), user);
     }

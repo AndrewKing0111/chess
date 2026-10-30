@@ -1,4 +1,4 @@
-package dataaccess.LocalStorageDAO;
+package dataaccess.memory;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class LocalStorageGameDAO implements GameDAO {
+public class MemoryGameDAO implements GameDAO {
     private Map<Integer, GameData> gameList = new HashMap<>();
     private int counter = 1;
 

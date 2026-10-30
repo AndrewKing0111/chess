@@ -1,4 +1,4 @@
-package dataaccess.LocalStorageDAO;
+package dataaccess.memory;
 
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
@@ -8,7 +8,7 @@ import model.UserData;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LocalStorageUserDAO implements UserDAO {
+public class MemoryUserDAO implements UserDAO {
     private Map<String, UserData> userDataMap = new HashMap<>();
 
     @Override

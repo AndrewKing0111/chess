@@ -1,4 +1,4 @@
-package dataaccess.LocalStorageDAO;
+package dataaccess.memory;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class LocalStorageAuthDAO implements AuthDAO {
+public class MemoryAuthDAO implements AuthDAO {
     private Map<String, AuthData> auths = new HashMap<>();
 
     @Override

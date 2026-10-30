@@ -1,13 +1,10 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.DatabaseDAO.DatabaseAuthDAO;
-import dataaccess.DatabaseDAO.DatabaseGameDAO;
-import dataaccess.DatabaseDAO.DatabaseManager;
-import dataaccess.DatabaseDAO.DatabaseUserDAO;
-import dataaccess.LocalStorageDAO.LocalStorageAuthDAO;
-import dataaccess.LocalStorageDAO.LocalStorageGameDAO;
-import dataaccess.LocalStorageDAO.LocalStorageUserDAO;
+import dataaccess.database.DatabaseAuthDAO;
+import dataaccess.database.DatabaseGameDAO;
+import dataaccess.database.DatabaseManager;
+import dataaccess.database.DatabaseUserDAO;
 import model.*;
 
 

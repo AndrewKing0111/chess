@@ -1,7 +1,6 @@
-package dataaccess.DatabaseDAO;
+package dataaccess.database;
 
 import dataaccess.DataAccessException;
-import dataaccess.ResponseException;
 
 import java.sql.*;
 import java.util.Properties;

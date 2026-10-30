@@ -1,7 +1,6 @@
-package dataaccess.DatabaseDAO;
+package dataaccess.database;
 
 import dataaccess.DataAccessException;
-import dataaccess.ResponseException;
 import dataaccess.UserDAO;
 import model.LoginData;
 import model.UserData;
@@ -9,7 +8,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class DatabaseUserDAO implements UserDAO {
 
