@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DatabaseDAOFactory;
 import model.LoginData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
@@ -15,7 +16,7 @@ public class DatabaseServiceTests {
     @BeforeEach
     public void setup() {
         try {
-            service = new Service();
+            service = new Service(new DatabaseDAOFactory());
             service.clear();
         } catch (Exception error) {
             fail();

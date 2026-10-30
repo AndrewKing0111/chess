@@ -2,6 +2,8 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseDAOFactory;
+import dataaccess.MemoryDAOFactory;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,7 @@ public class MemoryServiceTests {
     @BeforeEach
     public void setup() {
         try {
-            service = new Service();
+            service = new Service(new MemoryDAOFactory());
         } catch (Exception error) {
             fail();
         }

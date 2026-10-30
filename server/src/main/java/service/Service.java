@@ -10,22 +10,21 @@ import model.*;
 
 public class Service {
 
-    private final DatabaseAuthDAO auths;
-    private final DatabaseGameDAO games;
-    private final DatabaseUserDAO users;
+    private final AuthDAO auths;
+    private final GameDAO games;
+    private final UserDAO users;
 
 
-    public Service() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        this.auths = new DatabaseAuthDAO();
-        this.games = new DatabaseGameDAO();
-        this.users = new DatabaseUserDAO();
+    public Service(DAOFactory factory) throws DataAccessException {
+        this.auths = factory.createAuthDAO();
+        this.games = factory.createGameDAO();
+        this.users = factory.createUserDAO();
     }
 
     public void clear() throws DataAccessException {
-        users.clear();
-        games.clear();
         auths.clear();
+        games.clear();
+        users.clear();
     }
 
     public AuthData registerUser(UserData registerRequest) throws DataAccessException {
