@@ -60,8 +60,8 @@ public class DatabaseAuthDAO implements AuthDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             var preparedStatement = conn.prepareStatement("DELETE FROM auths WHERE authToken = ?");
             preparedStatement.setString(1, authToken);
-            var result = preparedStatement.executeQuery();
-            if (!result.next()) {
+            var result = preparedStatement.executeUpdate();
+            if (result < 1) {
                 throw new DataAccessException("unauthorized");
             }
         } catch (SQLException error) {
