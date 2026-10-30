@@ -9,7 +9,5 @@ public interface GameDAO {
 
     void joinGame(RequestJoinGame joinRequest, String username) throws DataAccessException;
 
-    GameData getGame(int gameID) throws DataAccessException;
-
     void clear() throws DataAccessException;
 }

@@ -77,14 +77,4 @@ public class MemoryGameDAO implements GameDAO {
                 throw new DataAccessException("bad request");
         }
     }
-
-    @Override
-    public GameData getGame(int gameID) throws DataAccessException {
-        return gameList.get(gameID);
-    }
-
-    @Override
-    public void updateGame(int gameID, String gameString) throws DataAccessException {
-
-    }
 }

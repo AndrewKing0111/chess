@@ -149,16 +149,6 @@ public class DatabaseGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData getGame(int gameID) throws DataAccessException {
-        return null;
-    }
-
-    @Override
-    public void updateGame(int gameID, String gameString) throws DataAccessException {
-
-    }
-
-    @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             var preparedStatement = conn.prepareStatement("TRUNCATE TABLE games");
