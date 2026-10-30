@@ -24,7 +24,7 @@ public class LocalStorageAuthDAO implements AuthDAO {
             auths.put(authToken, newAuth);
 
         } catch (Exception error) {
-            throw new DataAccessException("the server failed to create an authToken for the user");
+            throw new DataAccessException("the server experienced an internal error");
         }
         return newAuth;
     }
@@ -42,7 +42,7 @@ public class LocalStorageAuthDAO implements AuthDAO {
         try {
             auths.remove(authToken);
         } catch (Exception error) {
-            throw new DataAccessException("the server failed logout the user");
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 
@@ -58,7 +58,7 @@ public class LocalStorageAuthDAO implements AuthDAO {
         try {
             return auths.get(authToken);
         } catch (Exception error) {
-            throw new DataAccessException("the server failed to process the authorization");
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 
@@ -70,7 +70,7 @@ public class LocalStorageAuthDAO implements AuthDAO {
         try {
             return auths.get(authToken).username();
         } catch (Exception error) {
-            throw new DataAccessException("the server could not find the user");
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 

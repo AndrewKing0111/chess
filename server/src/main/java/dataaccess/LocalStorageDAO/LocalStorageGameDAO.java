@@ -35,7 +35,7 @@ public class LocalStorageGameDAO implements GameDAO {
             gameList.put(counter, game);
             return counter++;
         } catch (Exception error) {
-            throw new DataAccessException("the server failed to create the game");
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 

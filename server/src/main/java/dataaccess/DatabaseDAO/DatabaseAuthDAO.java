@@ -46,7 +46,7 @@ public class DatabaseAuthDAO implements AuthDAO {
             preparedStatement.setString(2, newAuthJSON);
             preparedStatement.executeUpdate();
         } catch (SQLException error) {
-            throw new DataAccessException("the server failed to create an authToken for the user");
+            throw new DataAccessException("the server experienced an internal error");
         }
         return newAuth;
     }
@@ -65,7 +65,7 @@ public class DatabaseAuthDAO implements AuthDAO {
                 throw new DataAccessException("unauthorized");
             }
         } catch (SQLException error) {
-            throw new DataAccessException("the server failed to logout the user");
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 
@@ -85,7 +85,7 @@ public class DatabaseAuthDAO implements AuthDAO {
                 throw new DataAccessException("unauthorized");
             }
         } catch (SQLException error) {
-            throw new DataAccessException("the server failed to process the authorization");
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 
@@ -106,7 +106,7 @@ public class DatabaseAuthDAO implements AuthDAO {
                 throw new DataAccessException("unauthorized");
             }
         } catch (SQLException error) {
-            throw new DataAccessException("the server failed to get the username for the authToken");
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 
@@ -116,7 +116,7 @@ public class DatabaseAuthDAO implements AuthDAO {
             var preparedStatement = conn.prepareStatement("TRUNCATE TABLE auths");
             preparedStatement.executeUpdate();
         } catch (SQLException error) {
-            throw new DataAccessException("the server failed to clear the database");
+            throw new DataAccessException("the server experienced an internal error");
         }
     }
 }
