@@ -26,7 +26,7 @@ public class DatabaseUserDAO implements UserDAO {
             try (var preparedStatement = conn.prepareStatement(configStatement)) {
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException ex) {
+        } catch (SQLException error) {
             throw new DataAccessException("the server experienced an internal error");
         }
     }
@@ -100,7 +100,7 @@ public class DatabaseUserDAO implements UserDAO {
                 throw new DataAccessException("unauthorized");
             }
         } catch (SQLException error) {
-            throw new DataAccessException("unauthorized");
+            throw new DataAccessException("the server failed to use the database to login");
         }
     }
 
@@ -109,7 +109,7 @@ public class DatabaseUserDAO implements UserDAO {
         try (Connection conn = DatabaseManager.getConnection()) {
             var preparedStatement = conn.prepareStatement("TRUNCATE TABLE users");
             preparedStatement.execute();
-        } catch (Exception error) {
+        } catch (SQLException error) {
             throw new DataAccessException("the server failed to clear the database");
         }
     }
