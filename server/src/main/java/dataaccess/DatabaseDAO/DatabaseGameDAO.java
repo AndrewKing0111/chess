@@ -26,7 +26,7 @@ public class DatabaseGameDAO implements GameDAO {
                       `whiteUsername` varchar(256) NULL,
                       `blackUsername` varchar(256) NULL,
                       `gameName` varchar(256) NOT NULL,
-                      `games` TEXT NOT NULL,
+                      `GameData` TEXT NOT NULL,
                       PRIMARY KEY (`id`),
                       INDEX(gameID)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
@@ -54,7 +54,7 @@ public class DatabaseGameDAO implements GameDAO {
 
         try (Connection conn = DatabaseManager.getConnection()) {
             var preparedStatement = conn.prepareStatement("INSERT INTO games (gameID, whiteUsername, blackUsername, " +
-                    "gameName, games) VALUES (?, ?, ?, ?, ?)");
+                    "gameName, GameData) VALUES (?, ?, ?, ?, ?)");
             preparedStatement.setInt(1, counter);
             preparedStatement.setString(2, whiteUserName);
             preparedStatement.setString(3, blackUserName);
@@ -113,25 +113,29 @@ public class DatabaseGameDAO implements GameDAO {
         }
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            var preparedStatement = conn.prepareStatement("SELECT GameData FROM games WHERE GameID = ?");
+            var preparedStatement = conn.prepareStatement("SELECT GameData FROM games WHERE gameID = ?");
             preparedStatement.setInt(1, gameID);
             var result = preparedStatement.executeQuery();
             if (result.next()) {
-                GameData game = new Gson().fromJson(result.getString("GameData"), GameData.class);
+                GameData game = new Gson().fromJson(result.getString("games"), GameData.class);
                 switch (playerColor) {
                     case "WHITE":
                         if (game.whiteUsername() != null) {
                             throw new DataAccessException("already taken");
                         }
-                        counter--;
-                        createGame(new RequestCreateGame(authToken, game.gameName(), username, game.blackUsername()));
+                        preparedStatement = conn.prepareStatement("UPDATE games SET whiteUsername = ? WHERE gameID = ?");
+                        preparedStatement.setString(1, game.whiteUsername());
+                        preparedStatement.setInt(2, game.gameID());
+                        preparedStatement.executeUpdate();
                         return;
                     case "BLACK":
                         if (game.blackUsername() != null) {
                             throw new DataAccessException("already taken");
                         }
-                        counter--;
-                        createGame(new RequestCreateGame(authToken, game.gameName(), game.whiteUsername(), username));
+                        preparedStatement = conn.prepareStatement("UPDATE games SET whiteUsername = ? WHERE gameID = ?");
+                        preparedStatement.setString(1, game.blackUsername());
+                        preparedStatement.setInt(2, game.gameID());
+                        preparedStatement.executeUpdate();
                         return;
                     default:
                         throw new DataAccessException("bad request");
