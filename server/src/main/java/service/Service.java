@@ -10,10 +10,6 @@ import model.*;
 
 public class Service {
 
-//    private final LocalStorageAuthDAO auths = new LocalStorageAuthDAO();
-//    private final LocalStorageGameDAO games = new LocalStorageGameDAO();
-//    private final LocalStorageUserDAO users = new LocalStorageUserDAO();
-
     private final DatabaseAuthDAO auths;
     private final DatabaseGameDAO games;
     private final DatabaseUserDAO users;
