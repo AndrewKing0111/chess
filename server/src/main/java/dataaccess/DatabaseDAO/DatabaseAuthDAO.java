@@ -7,6 +7,7 @@ import model.AuthData;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.UUID;
 
 public class DatabaseAuthDAO implements AuthDAO {
@@ -43,6 +44,7 @@ public class DatabaseAuthDAO implements AuthDAO {
             var preparedStatement = conn.prepareStatement("INSERT INTO auths VALUES (?, ?)");
             preparedStatement.setString(1, authToken);
             preparedStatement.setString(2, newAuthJSON);
+            preparedStatement.executeUpdate();
         } catch (SQLException error) {
             throw new DataAccessException("the server failed to create an authToken for the user");
         }
@@ -89,15 +91,32 @@ public class DatabaseAuthDAO implements AuthDAO {
 
     @Override
     public String getUsername(String authToken) throws DataAccessException {
-        return "";
+        if (authToken == null) {
+            throw new DataAccessException("bad request");
+        }
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var preparedStatement = conn.prepareStatement("SELECT AuthData FROM auths WHERE authToken = ?");
+            preparedStatement.setString(1, authToken);
+            var result = preparedStatement.executeQuery();
+            if (result.next()) {
+                var auth = new Gson().fromJson(result.getString("AuthData"), AuthData.class);
+                return auth.username();
+            } else {
+                throw new DataAccessException("unauthorized");
+            }
+        } catch (SQLException error) {
+            throw new DataAccessException("the server failed to get the username for the authToken");
+        }
     }
 
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-
+            var preparedStatement = conn.prepareStatement("TRUNCATE TABLE auths");
+            preparedStatement.executeUpdate();
         } catch (SQLException error) {
-
+            throw new DataAccessException("the server failed to clear the database");
         }
     }
 }

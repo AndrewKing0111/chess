@@ -1,5 +1,8 @@
 package service;
 
+import model.LoginData;
+import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +16,7 @@ public class DatabaseServiceTests {
     public void setup() {
         try {
             service = new Service();
+            service.clear();
         } catch (Exception error) {
             fail();
         }
@@ -22,6 +26,25 @@ public class DatabaseServiceTests {
     void clear() {
         try {
             service.clear();
+        } catch (Exception error) {
+            fail();
+        }
+    }
+
+    @Test
+    void registerUser() {
+        try {
+            service.registerUser(new UserData("username", "password", "email"));
+        } catch (Exception error) {
+            fail();
+        }
+    }
+
+    @Test
+    void loginUser() {
+        try {
+            service.registerUser(new UserData("username", "password", "email"));
+            service.loginUser(new LoginData("username", "password"));
         } catch (Exception error) {
             fail();
         }

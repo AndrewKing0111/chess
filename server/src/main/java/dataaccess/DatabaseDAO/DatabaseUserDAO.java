@@ -20,8 +20,7 @@ public class DatabaseUserDAO implements UserDAO {
                       `username` varchar(256) NOT NULL,
                       `password` varchar(256) NOT NULL,
                       `email` varchar(256) NOT NULL,
-                      PRIMARY KEY (`username`),
-                      UNIQUE(username)
+                      PRIMARY KEY (`username`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
                     """;
             try (var preparedStatement = conn.prepareStatement(configStatement)) {
@@ -66,6 +65,13 @@ public class DatabaseUserDAO implements UserDAO {
             throw new DataAccessException("bad request");
         }
 
+        try {
+            getUserByUsername(username);
+            throw new DataAccessException("already taken");
+        } catch (DataAccessException error) {
+            //
+        }
+
         String hash = BCrypt.hashpw(password, BCrypt.gensalt());
 
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -73,12 +79,9 @@ public class DatabaseUserDAO implements UserDAO {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, hash);
             preparedStatement.setString(3, email);
+            preparedStatement.executeUpdate();
         } catch (SQLException error) {
-            if (error.getMessage().contains("Duplicate")) {
-                throw new DataAccessException("already taken");
-            } else {
-                throw new DataAccessException("the server failed to register the user");
-            }
+            throw new DataAccessException("the server failed to register the user");
         }
     }
 
@@ -94,9 +97,15 @@ public class DatabaseUserDAO implements UserDAO {
         String hash = BCrypt.hashpw(password, BCrypt.gensalt());
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            var preparedStatement = conn.prepareStatement("SELECT password FROM users WHERE username = ?");
-            preparedStatement.setString(1, hash);
-            preparedStatement.executeQuery();
+            var preparedStatement = conn.prepareStatement("SELECT password FROM users WHERE username = ?", Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, username);
+            var result = preparedStatement.executeQuery();
+            if (result.next()) {
+                var userPassword = result.getString("password");
+                if (!BCrypt.checkpw(hash, userPassword)) {
+                    throw new DataAccessException("unauthorized");
+                }
+            }
         } catch (SQLException error) {
             throw new DataAccessException("unauthorized");
         }
@@ -105,17 +114,10 @@ public class DatabaseUserDAO implements UserDAO {
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var preparedStatement = conn.prepareStatement("DROP TABLE users");
+            var preparedStatement = conn.prepareStatement("TRUNCATE TABLE users", Statement.RETURN_GENERATED_KEYS);
             preparedStatement.execute();
-
-            var resultSet = preparedStatement.getGeneratedKeys();
-
         } catch (Exception error) {
             throw new DataAccessException("the server failed to clear the database");
         }
-    }
-
-    private void executeQuery(String query) throws ResponseException, DataAccessException {
-        var connection = DatabaseManager.getConnection();
     }
 }

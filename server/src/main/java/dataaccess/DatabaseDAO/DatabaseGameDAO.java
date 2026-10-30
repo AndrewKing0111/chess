@@ -60,6 +60,11 @@ public class DatabaseGameDAO implements GameDAO {
 
     @Override
     public void clear() throws DataAccessException {
-
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var preparedStatement = conn.prepareStatement("TRUNCATE TABLE games");
+            preparedStatement.executeUpdate();
+        } catch (SQLException error) {
+            throw new DataAccessException("the server failed to clear the database");
+        }
     }
 }
