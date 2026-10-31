@@ -235,17 +235,21 @@ public class ChessGame {
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
                 ChessPosition position = new ChessPosition(row, col);
-                if (gameBoard.getPiece(position) != null) {
-                    if (gameBoard.getPiece(position).getPieceType() == KING) {
-                        if (gameBoard.getPiece(position).getTeamColor() == teamColor) {
-                            if (teamColor == WHITE) {
-                                whiteKingPos = position;
-                            } else {
-                                blackKingPos = position;
-                            }
-                            return;
-                        }
+                getKingPositionHelper(teamColor, position);
+            }
+        }
+    }
+
+    private void getKingPositionHelper(ChessGame.TeamColor teamColor, ChessPosition position) {
+        if (gameBoard.getPiece(position) != null) {
+            if (gameBoard.getPiece(position).getPieceType() == KING) {
+                if (gameBoard.getPiece(position).getTeamColor() == teamColor) {
+                    if (teamColor == WHITE) {
+                        whiteKingPos = position;
+                    } else {
+                        blackKingPos = position;
                     }
+                    return;
                 }
             }
         }
