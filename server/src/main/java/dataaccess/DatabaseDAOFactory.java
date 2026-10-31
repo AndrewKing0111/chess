@@ -5,8 +5,6 @@ import dataaccess.database.DatabaseGameDAO;
 import dataaccess.database.DatabaseManager;
 import dataaccess.database.DatabaseUserDAO;
 
-import java.sql.DatabaseMetaData;
-
 public class DatabaseDAOFactory implements DAOFactory {
 
     public DatabaseDAOFactory() throws DataAccessException {
