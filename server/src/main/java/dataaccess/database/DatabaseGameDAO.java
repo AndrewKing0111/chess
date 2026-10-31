@@ -80,7 +80,7 @@ public class DatabaseGameDAO implements GameDAO {
                 String blackUsername = result.getString("blackUsername");
                 String gameName = result.getString("gameName");
 
-                ChessGame chessGame = new Gson().fromJson(result.getString("games"), ChessGame.class);
+                ChessGame chessGame = new Gson().fromJson(result.getString("GameData"), ChessGame.class);
 
                 GameData game = new GameData(
                         gameID,
@@ -104,7 +104,6 @@ public class DatabaseGameDAO implements GameDAO {
 
     @Override
     public void joinGame(RequestJoinGame joinRequest, String username) throws DataAccessException {
-        String authToken = joinRequest.authToken();
         int gameID = joinRequest.gameID();
         String playerColor = joinRequest.playerColor();
 
@@ -113,28 +112,32 @@ public class DatabaseGameDAO implements GameDAO {
         }
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            var preparedStatement = conn.prepareStatement("SELECT GameData FROM games WHERE gameID = ?");
+            var preparedStatement = conn.prepareStatement("SELECT * FROM games WHERE gameID = ?");
             preparedStatement.setInt(1, gameID);
             var result = preparedStatement.executeQuery();
             if (result.next()) {
-                GameData game = new Gson().fromJson(result.getString("games"), GameData.class);
+                var whiteUsername = result.getString("whiteUsername");
+                var blackUsername = result.getString("blackUsername");
+                var gameName = result.getString("gameName");
+                var chessGame = new Gson().fromJson(result.getString("GameData"), ChessGame.class);
+                GameData game = new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
                 switch (playerColor) {
                     case "WHITE":
                         if (game.whiteUsername() != null) {
                             throw new DataAccessException("already taken");
                         }
                         preparedStatement = conn.prepareStatement("UPDATE games SET whiteUsername = ? WHERE gameID = ?");
-                        preparedStatement.setString(1, game.whiteUsername());
-                        preparedStatement.setInt(2, game.gameID());
+                        preparedStatement.setString(1, username);
+                        preparedStatement.setInt(2, gameID);
                         preparedStatement.executeUpdate();
                         return;
                     case "BLACK":
                         if (game.blackUsername() != null) {
                             throw new DataAccessException("already taken");
                         }
-                        preparedStatement = conn.prepareStatement("UPDATE games SET whiteUsername = ? WHERE gameID = ?");
-                        preparedStatement.setString(1, game.blackUsername());
-                        preparedStatement.setInt(2, game.gameID());
+                        preparedStatement = conn.prepareStatement("UPDATE games SET blackUsername = ? WHERE gameID = ?");
+                        preparedStatement.setString(1, username);
+                        preparedStatement.setInt(2, gameID);
                         preparedStatement.executeUpdate();
                         return;
                     default:

@@ -14,7 +14,7 @@ public class Server {
 
     public Server() {
         try {
-            service = new Service(new MemoryDAOFactory());
+            service = new Service(new DatabaseDAOFactory());
         } catch (DataAccessException error) {
             System.exit(1);
         }
