@@ -13,14 +13,15 @@ import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MemoryServiceTests {
+public class ServiceTests {
 
     private static Service service;
 
     @BeforeEach
     public void setup() {
         try {
-            service = new Service(new MemoryDAOFactory());
+            service = new Service(new DatabaseDAOFactory());
+            service.clear();
         } catch (Exception error) {
             fail();
         }
