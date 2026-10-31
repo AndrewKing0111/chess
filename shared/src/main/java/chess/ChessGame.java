@@ -130,20 +130,15 @@ public class ChessGame {
             } else {
                 checkMoves = rules.pieceRule(pieceType).moves(gameBoard, blackKingPos);
             }
-            return isInCheckHelper(teamColor, pieceType, checkMoves);
-
-        }
-        return false;
-    }
-
-    private boolean isInCheckHelper(TeamColor teamColor, ChessPiece.PieceType pieceType, Collection<ChessMove> checkMoves) {
-        for (ChessMove move : checkMoves) {
-            if (gameBoard.getPiece(move.getEndPosition()) != null) {
-                if ((gameBoard.getPiece(move.getEndPosition()).getPieceType() == pieceType) &&
-                        (gameBoard.getPiece(move.getEndPosition()).getTeamColor() != teamColor)) {
-                    return true;
+            for (ChessMove move : checkMoves) {
+                if (gameBoard.getPiece(move.getEndPosition()) != null) {
+                    if ((gameBoard.getPiece(move.getEndPosition()).getPieceType() == pieceType) &&
+                            (gameBoard.getPiece(move.getEndPosition()).getTeamColor() != teamColor)) {
+                        return true;
+                    }
                 }
             }
+
         }
         return false;
     }
@@ -249,7 +244,6 @@ public class ChessGame {
                     } else {
                         blackKingPos = position;
                     }
-                    return;
                 }
             }
         }
