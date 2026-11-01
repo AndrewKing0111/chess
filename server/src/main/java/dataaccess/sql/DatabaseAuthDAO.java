@@ -1,4 +1,4 @@
-package dataaccess.database;
+package dataaccess.sql;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;

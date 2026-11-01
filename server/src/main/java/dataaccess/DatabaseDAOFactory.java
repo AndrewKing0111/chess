@@ -1,9 +1,9 @@
 package dataaccess;
 
-import dataaccess.database.DatabaseAuthDAO;
-import dataaccess.database.DatabaseGameDAO;
-import dataaccess.database.DatabaseManager;
-import dataaccess.database.DatabaseUserDAO;
+import dataaccess.sql.DatabaseAuthDAO;
+import dataaccess.sql.DatabaseGameDAO;
+import dataaccess.sql.DatabaseManager;
+import dataaccess.sql.DatabaseUserDAO;
 
 public class DatabaseDAOFactory implements DAOFactory {
 
