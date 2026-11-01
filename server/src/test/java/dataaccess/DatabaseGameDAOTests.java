@@ -5,6 +5,7 @@ import dataaccess.database.DatabaseGameDAO;
 import model.GameData;
 import model.GameListData;
 import model.RequestCreateGame;
+import model.RequestJoinGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -111,5 +112,18 @@ public class DatabaseGameDAOTests {
     }
 
     @Test
-    void join
+    void joinGameValidRequest() {
+        var game = createValidGame();
+        try {
+            databaseGameDAO.joinGame(new RequestJoinGame("authToken", "WHITE", game.gameID()), "username");
+        } catch (DataAccessException error) {
+            fail();
+        }
+        GameListData returnedGameList = null;
+        try {
+            returnedGameList = databaseGameDAO.listGames("authToken");
+        } catch (DataAccessException error) {
+            fail();
+        }
+    }
 }
