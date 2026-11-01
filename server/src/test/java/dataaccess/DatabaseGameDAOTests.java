@@ -169,6 +169,7 @@ public class DatabaseGameDAOTests {
         }
     }
 
+    @Test
     void joinGameBadColor() {
         var game = createValidGame();
         try {
