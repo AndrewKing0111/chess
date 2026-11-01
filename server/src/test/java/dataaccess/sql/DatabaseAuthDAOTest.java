@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class DatabaseAuthDAOTests {
+public class DatabaseAuthDAOTest {
 
     private final DatabaseAuthDAO databaseAuthDAO = new DatabaseAuthDAO();
 
-    public DatabaseAuthDAOTests() throws DataAccessException {
+    public DatabaseAuthDAOTest() throws DataAccessException {
     }
 
     @BeforeEach

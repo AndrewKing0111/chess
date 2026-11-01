@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class DatabaseUserDAOTests {
+public class DatabaseUserDAOTest {
 
     private final DatabaseUserDAO databaseUserDAO = new DatabaseUserDAO();
 
-    public DatabaseUserDAOTests() throws DataAccessException {}
+    public DatabaseUserDAOTest() throws DataAccessException {}
 
     public void registerUserValidUser() {
         var request = new UserData("username", "password", "email");

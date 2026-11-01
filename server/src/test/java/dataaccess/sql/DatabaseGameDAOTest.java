@@ -15,11 +15,11 @@ import java.util.HashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class DatabaseGameDAOTests {
+public class DatabaseGameDAOTest {
 
     private final DatabaseGameDAO databaseGameDAO =  new DatabaseGameDAO();
 
-    public DatabaseGameDAOTests() throws DataAccessException {}
+    public DatabaseGameDAOTest() throws DataAccessException {}
 
     @BeforeEach
     public void setup() {
