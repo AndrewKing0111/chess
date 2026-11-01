@@ -1,6 +1,7 @@
-package dataaccess;
+package dataaccess.sql;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.database.DatabaseGameDAO;
 import model.GameData;
 import model.GameListData;

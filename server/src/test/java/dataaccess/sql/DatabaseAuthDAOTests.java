@@ -1,8 +1,8 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.DataAccessException;
 import dataaccess.database.DatabaseAuthDAO;
 import model.AuthData;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
