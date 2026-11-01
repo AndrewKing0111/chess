@@ -119,11 +119,63 @@ public class DatabaseGameDAOTests {
         } catch (DataAccessException error) {
             fail();
         }
-        GameListData returnedGameList = null;
+    }
+
+    @Test
+    void joinGameInvalidRequest() {
+        var game = createValidGame();
         try {
-            returnedGameList = databaseGameDAO.listGames("authToken");
+            databaseGameDAO.joinGame(new RequestJoinGame("authToken", "WHITE", -1), "username");
+            fail();
+        } catch (DataAccessException error) {
+            assertEquals("bad request", error.getMessage());
+        }
+
+        try {
+            databaseGameDAO.joinGame(new RequestJoinGame("authToken", null, game.gameID()), "username");
+            fail();
+        } catch (DataAccessException error) {
+            assertEquals("bad request", error.getMessage());
+        }
+    }
+
+    @Test
+    void joinGameStealColor() {
+        var game = createValidGame();
+        try {
+            databaseGameDAO.joinGame(new RequestJoinGame("authToken", "WHITE", game.gameID()), "username");
         } catch (DataAccessException error) {
             fail();
+        }
+
+        try {
+            databaseGameDAO.joinGame(new RequestJoinGame("authToken", "WHITE", game.gameID()), "username1");
+            fail();
+        } catch (DataAccessException error) {
+            assertEquals("already taken", error.getMessage());
+        }
+
+        try {
+            databaseGameDAO.joinGame(new RequestJoinGame("authToken", "BLACK", game.gameID()), "username");
+        } catch (DataAccessException error) {
+            fail();
+        }
+
+        try {
+            databaseGameDAO.joinGame(new RequestJoinGame("authToken", "BLACK", game.gameID()), "username1");
+            fail();
+        } catch (DataAccessException error) {
+            assertEquals("already taken", error.getMessage());
+        }
+    }
+
+    void joinGameBadColor() {
+        var game = createValidGame();
+        try {
+            databaseGameDAO.joinGame(new RequestJoinGame("authToken", "GREEN", game.gameID()), "username");
+            fail();
+        } catch (DataAccessException error) {
+            assertEquals("bad request", error.getMessage());
         }
     }
 }
