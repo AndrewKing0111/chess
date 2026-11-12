@@ -15,7 +15,7 @@ import static ui.EscapeSequences.WHITE_KING;
 
 public class ChessClient {
     private ServerFacade serverFacade;
-    private State state = SIGNED_OUT;
+    private State state = LOGGED_OUT;
     private HashSet<String> authTokens = new HashSet<>();
 
     public ChessClient() {
@@ -40,15 +40,15 @@ public class ChessClient {
             userInput = scanner.nextLine();
             String[] userInputParts = userInput.split(" ");
 
-            if (state.equals(SIGNED_OUT)) {
-                signedOutMenu(userInputParts);
+            if (state.equals(LOGGED_OUT)) {
+                loggedOutMenu(userInputParts);
             } else {
-                signedInMenu(userInputParts);
+                loggedInMenu(userInputParts);
             }
         }
     }
 
-    private void signedOutMenu(String[] parts) {
+    private void loggedOutMenu(String[] parts) {
         try {
             switch (parts[0]) {
                 case "help":
@@ -60,11 +60,14 @@ public class ChessClient {
                 case "login":
                     var result = serverFacade.loginUser(parts[1], parts[2]);
                     authTokens.add(result.authToken());
-                    state = SIGNED_IN;
+                    state = LOGGED_IN;
+                    System.out.printf("Logged in as %s\n", result.username());
                     break;
                 case "register":
                     result = serverFacade.registerUser(parts[1], parts[2], parts[3]);
                     authTokens.add(result.authToken());
+                    state = LOGGED_IN;
+                    System.out.printf("Logged in as %s\n", result.username());
                     break;
                 case "quit":
                     System.out.println("Thanks for playing!");
@@ -77,8 +80,27 @@ public class ChessClient {
         }
     }
 
-    private void signedInMenu(String[] parts) {
-
+    private void loggedInMenu(String[] parts) {
+        try {
+            switch (parts[0]) {
+                case "help":
+                    System.out.println("create <NAME> - a game");
+                    System.out.println("help - with possible commands");
+                    System.out.println("join <ID> [WHITE|BLACK] - a game");
+                    System.out.println("list - games");
+                    System.out.println("logout - when you are done");
+                    System.out.println("observe <ID> - a game");
+                    System.out.println("quit - playing chess");
+                    break;
+                case "quit":
+                    System.out.println("Thanks for playing!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid input. Please try again.");
+            }
+        } catch (Exception ex) {
+            printException(ex);
+        }
     }
 
     private void printException(Exception ex) {
