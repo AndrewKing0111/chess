@@ -29,9 +29,10 @@ public class ServerFacade {
         sendRequest(request);
     }
 
-    public void joinGame(String playerColor, String gameID) throws ResponseException {
-        var request = buildRequest("PUT", "/game", Map.of("playerColor", playerColor, "gameID", gameID), false, null);
-        sendRequest(request);
+    public void joinGame(String playerColor, String gameID, String authToken) throws ResponseException {
+        var request = buildRequest("PUT", "/game", Map.of("playerColor", playerColor, "gameID", gameID), true, authToken);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     public GameListData listGames(String authToken) throws ResponseException {
@@ -48,7 +49,8 @@ public class ServerFacade {
 
     public void logoutUser(String authToken) throws ResponseException {
         var request = buildRequest("DELETE", "/session", null, true, authToken);
-        sendRequest(request);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     public AuthData registerUser(String username, String password, String email) throws ResponseException {

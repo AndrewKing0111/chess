@@ -100,11 +100,11 @@ public class ChessClient {
                     System.out.println("quit - playing chess");
                     break;
                 case "join":
-                    serverFacade.joinGame(parts[1], parts[2]);
+                    serverFacade.joinGame(parts[1], parts[2], authTokens.getFirst());
                     GameData gameData = null;
                     var gameList = serverFacade.listGames(authTokens.getFirst());
                     for (var game : gameList.games()) {
-                        if (game.gameID() == Integer.valueOf(parts[2])) {
+                        if (game.gameID() == Integer.parseInt(parts[2])) {
                             gameData = game;
                         }
                     }
@@ -127,6 +127,9 @@ public class ChessClient {
                     break;
                 case "logout":
                     serverFacade.logoutUser(authTokens.getLast());
+                    break;
+                case "observe":
+
                 case "quit":
                     System.out.println("Thanks for playing!");
                     System.exit(0);
@@ -145,68 +148,75 @@ public class ChessClient {
 
     private void renderBoard(GameData gameData, ChessGame.TeamColor teamColor) {
         ChessBoard board = gameData.game().getBoard();
-        if (teamColor == WHITE) {
+        // First row
+        printFirstAndLastRow(teamColor);
+        for (int displayRow = 1; displayRow < 9; displayRow++) {
+            int row = (teamColor == WHITE) ? 9 - displayRow : displayRow;
             StringBuilder sb = new StringBuilder();
-            // First row
-            sb.append(SET_BG_COLOR_DARK_GREY)
-                    .append(SET_TEXT_COLOR_WHITE)
-                    .append("    A  B  C  D  E  F  G  H    ")
-                    .append(RESET_BG_COLOR)
-                    .append("\n");
-            System.out.print(sb);
-            for (int row = 1; row < 9; row++) {
-                sb = new StringBuilder();
-                for (int col = 0; col < 10; col++) {
-                    String bgColor = ((row + col) % 2 == 0)
-                            ? SET_BG_COLOR_BLACK
-                            : SET_BG_COLOR_LIGHT_GREY;
-                    // Format for row numbers on sides of board
-                    if (col == 0 || col == 9) {
-                        sb.append(SET_BG_COLOR_DARK_GREY)
-                                .append(SET_TEXT_COLOR_WHITE)
-                                .append(" ")
-                                .append(row)
-                                .append(" ");
+            for (int displayCol = 0; displayCol < 10; displayCol++) {
+                int col = (teamColor == WHITE) ? 9 - displayCol : displayCol;
+                String bgColor = ((row + col) % 2 == 0)
+                        ? SET_BG_COLOR_WHITE
+                        : SET_BG_COLOR_BLACK;
+                // Format for row numbers on sides of board
+                if (col == 0 || col == 9) {
+                    sb.append(SET_BG_COLOR_MAGENTA)
+                            .append(SET_TEXT_COLOR_WHITE)
+                            .append(" ")
+                            .append(row)
+                            .append(" ");
+                } else {
+                    ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                    // If no piece, add a blank square
+                    if (piece == null) {
+                        sb.append(bgColor).append("   ");
                     } else {
-                        ChessPiece piece = board.getPiece(new ChessPosition(row, col));
-                        // If no piece, add a blank square
-                        if (piece == null) {
-                            sb.append(bgColor).append("   ");
+                        // Render each piece according to the correct bg color and team color
+                        if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == WHITE) {
+                            sb.append(bgColor)
+                                    .append(SET_TEXT_COLOR_RED)
+                                    .append(" ")
+                                    .append(board.getPiece(new ChessPosition(row, col)).toString())
+                                    .append(" ");
                         } else {
-                            // Render each piece according to the correct bg color and team color
-                            if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == WHITE) {
-                                sb.append(bgColor)
-                                        .append(SET_TEXT_COLOR_RED)
-                                        .append(" ")
-                                        .append(board.getPiece(new ChessPosition(row, col)).toString())
-                                        .append(" ");
-                            } else {
-                                sb.append(bgColor)
-                                        .append(SET_TEXT_COLOR_BLUE)
-                                        .append(" ")
-                                        .append(board.getPiece(new ChessPosition(row, col)).toString())
-                                        .append(" ");
-                            }
+                            sb.append(bgColor)
+                                    .append(SET_TEXT_COLOR_BLUE)
+                                    .append(" ")
+                                    .append(board.getPiece(new ChessPosition(row, col)).toString())
+                                    .append(" ");
                         }
                     }
                 }
-                // Reset the bg color so the board doesn't stretch across entire screen
-                sb.append(RESET_BG_COLOR);
-                System.out.println(sb);
             }
-            sb = new StringBuilder();
-            // Last row
-            sb.append(SET_BG_COLOR_DARK_GREY)
+            // Reset the bg color so the board doesn't stretch across entire screen
+            sb.append(RESET_BG_COLOR);
+            System.out.println(sb);
+        }
+        // Last row
+        printFirstAndLastRow(teamColor);
+    }
+
+    private void printFirstAndLastRow(ChessGame.TeamColor teamColor) {
+        StringBuilder sb = new StringBuilder();
+        if(teamColor == WHITE) {
+            sb.append(SET_BG_COLOR_MAGENTA)
                     .append(SET_TEXT_COLOR_WHITE)
                     .append("    A  B  C  D  E  F  G  H    ")
                     .append(RESET_BG_COLOR)
                     .append("\n");
-            System.out.print(sb);
+        } else {
+            sb.append(SET_BG_COLOR_MAGENTA)
+                    .append(SET_TEXT_COLOR_WHITE)
+                    .append("    H  G  F  E  D  C  B  A    ")
+                    .append(RESET_BG_COLOR)
+                    .append("\n");
         }
+        System.out.print(sb);
     }
 
     private void printException(Exception ex) {
         System.err.println(ex.getMessage());
+        System.out.println();
     }
 
     private static void waitForServer() throws InterruptedException {

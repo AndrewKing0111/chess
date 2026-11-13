@@ -1,4 +1,4 @@
-package facade;
+package server;
 
 import dataaccess.DataAccessException;
 

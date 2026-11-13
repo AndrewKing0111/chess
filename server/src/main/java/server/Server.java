@@ -1,4 +1,4 @@
-package facade;
+package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
