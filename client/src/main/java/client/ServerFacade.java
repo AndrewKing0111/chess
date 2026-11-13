@@ -46,6 +46,11 @@ public class ServerFacade {
         return handleResponse(response, AuthData.class);
     }
 
+    public void logoutUser(String authToken) throws ResponseException {
+        var request = buildRequest("DELETE", "/session", null, true, authToken);
+        sendRequest(request);
+    }
+
     public AuthData registerUser(String username, String password, String email) throws ResponseException {
         var request = buildRequest("POST", "/user", Map.of("username", username, "password", password, "email", email), false, null);
         var response = sendRequest(request);

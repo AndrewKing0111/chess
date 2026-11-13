@@ -120,4 +120,24 @@ public class ServerFacadeTests {
         }
         fail();
     }
+
+    @Test
+    public void logoutUserValidAuthToken() {
+        try {
+            serverFacade.logoutUser(authToken);
+        } catch (ResponseException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void logoutUserInvalidAuthToken() {
+        try {
+            serverFacade.logoutUser("bad auth token");
+        } catch (ResponseException e) {
+            assertEquals("Error: unauthorized", e.getMessage());
+            return;
+        }
+        fail();
+    }
 }

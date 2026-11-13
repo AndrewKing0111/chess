@@ -99,21 +99,10 @@ public class ChessClient {
                     System.out.println("observe <ID> - a game");
                     System.out.println("quit - playing chess");
                     break;
-                case "list":
-                    var gameList = serverFacade.listGames(authTokens.getFirst());
-                    if (gameList.games().isEmpty()) {
-                        System.out.println("No games created!");
-                    } else {
-                        System.out.println("Game ID  Game Name");
-                        for (var game : gameList.games()) {
-                            System.out.printf("%7s  %s\n", game.gameID(), game.gameName());
-                        }
-                    }
-                    break;
                 case "join":
                     serverFacade.joinGame(parts[1], parts[2]);
                     GameData gameData = null;
-                    gameList = serverFacade.listGames(authTokens.getFirst());
+                    var gameList = serverFacade.listGames(authTokens.getFirst());
                     for (var game : gameList.games()) {
                         if (game.gameID() == Integer.valueOf(parts[2])) {
                             gameData = game;
@@ -125,6 +114,19 @@ public class ChessClient {
                         renderBoard(gameData, BLACK);
                     }
                     break;
+                case "list":
+                    gameList = serverFacade.listGames(authTokens.getFirst());
+                    if (gameList.games().isEmpty()) {
+                        System.out.println("No games created!");
+                    } else {
+                        System.out.println("Game ID  Game Name");
+                        for (var game : gameList.games()) {
+                            System.out.printf("%7s  %s\n", game.gameID(), game.gameName());
+                        }
+                    }
+                    break;
+                case "logout":
+                    serverFacade.logoutUser(authTokens.getLast());
                 case "quit":
                     System.out.println("Thanks for playing!");
                     System.exit(0);
