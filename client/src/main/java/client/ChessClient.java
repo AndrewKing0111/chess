@@ -1,8 +1,11 @@
 package client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import model.GameData;
-import server.ServerFacade;
+import facade.ServerFacade;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,8 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import static chess.ChessGame.TeamColor.*;
 import static client.State.*;
-import static ui.EscapeSequences.BLACK_KING;
-import static ui.EscapeSequences.WHITE_KING;
+import static ui.EscapeSequences.*;
 
 public class ChessClient {
     private ServerFacade serverFacade;
@@ -118,7 +120,11 @@ public class ChessClient {
                             gameData = game;
                         }
                     }
-                    renderBoard(gameData);
+                    if (parts[1].equals("WHITE")) {
+                        renderBoard(gameData, WHITE);
+                    } else {
+                        renderBoard(gameData, BLACK);
+                    }
                     break;
                 case "quit":
                     System.out.println("Thanks for playing!");
@@ -132,8 +138,70 @@ public class ChessClient {
         }
     }
 
-    private void renderBoard(GameData gameData) {
+    private enum bgColor {
+        SET_BG_COLOR_BLACK, SET_BG_COLOR_LIGHT_GREY;
+    }
 
+    private void renderBoard(GameData gameData, ChessGame.TeamColor teamColor) {
+        ChessBoard board = gameData.game().getBoard();
+        if (teamColor == WHITE) {
+            StringBuilder sb = new StringBuilder();
+            // First row
+            sb.append(SET_BG_COLOR_DARK_GREY)
+                    .append(SET_TEXT_COLOR_WHITE)
+                    .append("    A  B  C  D  E  F  G  H    ")
+                    .append(RESET_BG_COLOR)
+                    .append("\n");
+            System.out.print(sb);
+            for (int row = 1; row < 9; row++) {
+                sb = new StringBuilder();
+                for (int col = 0; col < 10; col++) {
+                    String bgColor = ((row + col) % 2 == 0)
+                            ? SET_BG_COLOR_BLACK
+                            : SET_BG_COLOR_LIGHT_GREY;
+                    // Format for row numbers on sides of board
+                    if (col == 0 || col == 9) {
+                        sb.append(SET_BG_COLOR_DARK_GREY)
+                                .append(SET_TEXT_COLOR_WHITE)
+                                .append(" ")
+                                .append(row)
+                                .append(" ");
+                    } else {
+                        ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                        // If no piece, add a blank square
+                        if (piece == null) {
+                            sb.append(bgColor).append("   ");
+                        } else {
+                            // Render each piece according to the correct bg color and team color
+                            if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == WHITE) {
+                                sb.append(bgColor)
+                                        .append(SET_TEXT_COLOR_RED)
+                                        .append(" ")
+                                        .append(board.getPiece(new ChessPosition(row, col)).toString())
+                                        .append(" ");
+                            } else {
+                                sb.append(bgColor)
+                                        .append(SET_TEXT_COLOR_BLUE)
+                                        .append(" ")
+                                        .append(board.getPiece(new ChessPosition(row, col)).toString())
+                                        .append(" ");
+                            }
+                        }
+                    }
+                }
+                // Reset the bg color so the board doesn't stretch across entire screen
+                sb.append(RESET_BG_COLOR);
+                System.out.println(sb);
+            }
+            sb = new StringBuilder();
+            // Last row
+            sb.append(SET_BG_COLOR_DARK_GREY)
+                    .append(SET_TEXT_COLOR_WHITE)
+                    .append("    A  B  C  D  E  F  G  H    ")
+                    .append(RESET_BG_COLOR)
+                    .append("\n");
+            System.out.print(sb);
+        }
     }
 
     private void printException(Exception ex) {
