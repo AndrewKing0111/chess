@@ -5,7 +5,6 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import model.GameData;
-import facade.ServerFacade;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -206,7 +205,6 @@ public class ChessClient {
 
     private void printException(Exception ex) {
         System.err.println(ex.getMessage());
-        System.exit(1);
     }
 
     private static void waitForServer() throws InterruptedException {
