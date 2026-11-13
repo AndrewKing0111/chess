@@ -1,5 +1,6 @@
 package client;
 
+import model.GameListData;
 import org.junit.jupiter.api.*;
 import facade.Server;
 
@@ -71,4 +72,27 @@ public class ServerFacadeTests {
         }
     }
 
+    @Test
+    public void listGames() {
+        GameListData result = null;
+        try {
+            createValidGame();
+            createValidGame();
+            result = serverFacade.listGames(authToken);
+        } catch (ResponseException e) {
+            fail();
+        }
+        assertEquals(2, result.games().size());
+    }
+
+    @Test
+    public void listGamesInvalidAuthToken() {
+        try {
+            createValidGame();
+            createValidGame();
+            serverFacade.listGames("bad auth token");
+        } catch (ResponseException e) {
+            fail();
+        }
+    }
 }
