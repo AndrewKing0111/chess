@@ -100,11 +100,18 @@ public class ChessClient {
                     System.out.println("quit - playing chess");
                     break;
                 case "join":
-                    serverFacade.joinGame(parts[1], parts[2], authTokens.getFirst());
-                    GameData gameData = null;
                     var gameList = serverFacade.listGames(authTokens.getFirst());
+                    int gameID = -1;
+                    int count = 1;
                     for (var game : gameList.games()) {
-                        if (game.gameID() == Integer.parseInt(parts[2])) {
+                        if (count++ == Integer.parseInt(parts[2])) {
+                            gameID = game.gameID();
+                        }
+                    }
+                    serverFacade.joinGame(parts[1], String.valueOf(gameID), authTokens.getFirst());
+                    GameData gameData = null;
+                    for (var game : gameList.games()) {
+                        if (game.gameID() == gameID) {
                             gameData = game;
                         }
                     }
@@ -119,17 +126,34 @@ public class ChessClient {
                     if (gameList.games().isEmpty()) {
                         System.out.println("No games created!");
                     } else {
-                        System.out.println("Game ID  Game Name");
+                        System.out.println("Game Number  Game Name  White Player  Black Player");
+                        int num = 1;
                         for (var game : gameList.games()) {
-                            System.out.printf("%7s  %s\n", game.gameID(), game.gameName());
+                            System.out.printf("%11s  %9s  %12s  %12s\n", num++, game.gameName(), (game.whiteUsername() == null) ? "" : game.whiteUsername(), (game.blackUsername() == null)  ? "" : game.blackUsername());
                         }
                     }
                     break;
                 case "logout":
                     serverFacade.logoutUser(authTokens.getLast());
+                    state = LOGGED_OUT;
                     break;
                 case "observe":
-
+                    gameList = serverFacade.listGames(authTokens.getFirst());
+                    gameID = -1;
+                    count = 1;
+                    for (var game : gameList.games()) {
+                        if (count++ == Integer.parseInt(parts[1])) {
+                            gameID = game.gameID();
+                        }
+                    }
+                    gameData = null;
+                    for (var game : gameList.games()) {
+                        if (game.gameID() == gameID) {
+                            gameData = game;
+                        }
+                    }
+                    renderBoard(gameData, WHITE);
+                    break;
                 case "quit":
                     System.out.println("Thanks for playing!");
                     System.exit(0);
@@ -214,9 +238,17 @@ public class ChessClient {
         System.out.print(sb);
     }
 
-    private void printException(Exception ex) {
-        System.err.println(ex.getMessage());
-        System.out.println();
+    private void printException(ResponseException ex) {
+        switch (ex.code()) {
+            case ClientError:
+                System.out.println("I'm sorry, something about your input was incorrect. Please try again.");
+                break;
+            case ServerError:
+                System.out.println("I'm sorry, the server experienced an error. Please try again.");
+                break;
+            default:
+                System.out.println("I'm sorry, the system experienced an error. Please try again.");
+        }
     }
 
     private static void waitForServer() throws InterruptedException {
