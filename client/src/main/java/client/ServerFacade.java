@@ -90,11 +90,15 @@ public class ServerFacade {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
             var body = response.body();
-            if (body != null) {
-                throw ResponseException.fromJson(body);
+
+            if (body != null && !body.isBlank()) {
+                throw ResponseException.fromJson(body, status);
             }
 
-            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+            throw new ResponseException(
+                    ResponseException.fromHttpStatusCode(status),
+                    "HTTP Error: " + status
+            );
         }
 
         if (responseClass != null) {

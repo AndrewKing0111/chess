@@ -1,5 +1,6 @@
 package client;
 
+import model.AuthData;
 import model.GameListData;
 import org.junit.jupiter.api.*;
 import facade.Server;
@@ -92,7 +93,31 @@ public class ServerFacadeTests {
             createValidGame();
             serverFacade.listGames("bad auth token");
         } catch (ResponseException e) {
+            assertEquals("Error: unauthorized", e.getMessage());
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    public void loginUser() {
+        AuthData result = null;
+        try {
+            result = serverFacade.loginUser("u", "p");
+        } catch (ResponseException e) {
             fail();
         }
+        assertEquals("u", result.username());
+    }
+
+    @Test
+    public void loginUserInvalidPassword() {
+        try {
+            serverFacade.loginUser("u", "password");
+        } catch (ResponseException e) {
+            assertEquals("Error: unauthorized", e.getMessage());
+            return;
+        }
+        fail();
     }
 }
