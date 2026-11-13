@@ -131,7 +131,9 @@ public class ChessClient {
                         System.out.println("Game Number  Game Name  White Player  Black Player");
                         int num = 1;
                         for (var game : gameList.games()) {
-                            System.out.printf("%11s  %9s  %12s  %12s\n", num++, game.gameName(), (game.whiteUsername() == null) ? "" : game.whiteUsername(), (game.blackUsername() == null)  ? "" : game.blackUsername());
+                            System.out.printf("%11s  %9s  %12s  %12s\n", num++, game.gameName(),
+                                    (game.whiteUsername() == null) ? "" : game.whiteUsername(),
+                                    (game.blackUsername() == null)  ? "" : game.blackUsername());
                         }
                     }
                     break;
@@ -168,10 +170,6 @@ public class ChessClient {
         }
     }
 
-    private enum bgColor {
-        SET_BG_COLOR_BLACK, SET_BG_COLOR_LIGHT_GREY;
-    }
-
     private void renderBoard(GameData gameData, ChessGame.TeamColor teamColor) {
         ChessBoard board = gameData.game().getBoard();
         // First row
@@ -191,26 +189,26 @@ public class ChessClient {
                             .append(" ")
                             .append(row)
                             .append(" ");
+                    continue;
+                }
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                // If no piece, add a blank square
+                if (piece == null) {
+                    sb.append(bgColor).append("   ");
                 } else {
-                    ChessPiece piece = board.getPiece(new ChessPosition(row, col));
-                    // If no piece, add a blank square
-                    if (piece == null) {
-                        sb.append(bgColor).append("   ");
+                    // Render each piece according to the correct bg color and team color
+                    if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == WHITE) {
+                        sb.append(bgColor)
+                                .append(SET_TEXT_COLOR_RED)
+                                .append(" ")
+                                .append(board.getPiece(new ChessPosition(row, col)).toString())
+                                .append(" ");
                     } else {
-                        // Render each piece according to the correct bg color and team color
-                        if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == WHITE) {
-                            sb.append(bgColor)
-                                    .append(SET_TEXT_COLOR_RED)
-                                    .append(" ")
-                                    .append(board.getPiece(new ChessPosition(row, col)).toString())
-                                    .append(" ");
-                        } else {
-                            sb.append(bgColor)
-                                    .append(SET_TEXT_COLOR_BLUE)
-                                    .append(" ")
-                                    .append(board.getPiece(new ChessPosition(row, col)).toString())
-                                    .append(" ");
-                        }
+                        sb.append(bgColor)
+                                .append(SET_TEXT_COLOR_BLUE)
+                                .append(" ")
+                                .append(board.getPiece(new ChessPosition(row, col)).toString())
+                                .append(" ");
                     }
                 }
             }
