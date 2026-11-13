@@ -24,6 +24,10 @@ public class ServerFacade {
         sendRequest(request);
     }
 
+    public void joinGame(String playerColor, String gameID) {
+        var request = buildRequest("PUT", "/game", Map.of("playerColor", playerColor, ""))
+    }
+
     public AuthData loginUser(String username, String password) throws ResponseException {
         var request = buildRequest("POST", "/session", Map.of("username", username, "password", password));
         var response = sendRequest(request);

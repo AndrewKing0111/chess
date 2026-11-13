@@ -92,6 +92,8 @@ public class ChessClient {
                     System.out.println("observe <ID> - a game");
                     System.out.println("quit - playing chess");
                     break;
+                case "join":
+                    serverFacade.joinGame(parts[1], parts[2]);
                 case "quit":
                     System.out.println("Thanks for playing!");
                     System.exit(0);
