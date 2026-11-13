@@ -3,6 +3,7 @@ package client;
 import org.junit.jupiter.api.*;
 import facade.Server;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
@@ -45,6 +46,26 @@ public class ServerFacadeTests {
     public void createGameInvalidAuthToken() {
         try {
             serverFacade.createGame("test", "bad auth token");
+        } catch (ResponseException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void joinGame() {
+        try {
+            createValidGame();
+            serverFacade.joinGame("WHITE", "1");
+        } catch (ResponseException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void joinGameInvalidGameID() {
+        try {
+            createValidGame();
+            serverFacade.joinGame("WHITE", "-1");
         } catch (ResponseException e) {
             fail();
         }
