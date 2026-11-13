@@ -13,6 +13,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static chess.ChessGame.TeamColor.*;
+import static client.ResponseException.Code.ClientError;
+import static client.ResponseException.Code.ServerError;
 import static client.State.*;
 import static ui.EscapeSequences.*;
 
@@ -238,16 +240,20 @@ public class ChessClient {
         System.out.print(sb);
     }
 
-    private void printException(ResponseException ex) {
-        switch (ex.code()) {
-            case ClientError:
-                System.out.println("I'm sorry, something about your input was incorrect. Please try again.");
-                break;
-            case ServerError:
-                System.out.println("I'm sorry, the server experienced an error. Please try again.");
-                break;
-            default:
-                System.out.println("I'm sorry, the system experienced an error. Please try again.");
+    private void printException(Exception ex) {
+        if (ex instanceof ResponseException) {
+            switch (((ResponseException) ex).code()) {
+                case ClientError:
+                    System.out.println("I'm sorry, something about your input was incorrect. Please try again.");
+                    break;
+                case ServerError:
+                    System.out.println("I'm sorry, the server experienced an error. Please try again.");
+                    break;
+                default:
+                    System.out.println("I'm sorry, the system experienced an error. Please try again.");
+            }
+        } else {
+            System.out.println("I'm sorry, the system experienced an error. Please try again.");
         }
     }
 

@@ -17,14 +17,21 @@ public class ServerFacadeTests {
 
     @BeforeAll
     public static void init() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("http://localhost:");
         server = new Server();
         var port = server.run(0);
+        sb.append(port);
+        try {
+            serverFacade = new ServerFacade(sb.toString());
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
         System.out.println("Started test HTTP server on " + port);
     }
 
     @BeforeEach
     public void setup() throws ResponseException {
-        serverFacade = new ServerFacade("http://localhost:8080");
         serverFacade.clear();
         authToken = serverFacade.registerUser("u", "p", "e").authToken();
     }
