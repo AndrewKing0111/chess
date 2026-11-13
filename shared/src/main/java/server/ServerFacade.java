@@ -26,7 +26,7 @@ public class ServerFacade {
 
     public void createGame(String gameName, String authToken) throws ResponseException {
         var request = buildRequest("POST", "/game", Map.of("gameName", gameName), true, authToken);
-        var response = sendRequest(request);
+        sendRequest(request);
     }
 
     public void joinGame(String playerColor, String gameID) throws ResponseException {

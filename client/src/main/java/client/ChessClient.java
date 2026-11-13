@@ -1,6 +1,7 @@
 package client;
 
 import chess.ChessGame;
+import model.GameData;
 import server.ServerFacade;
 
 import java.io.IOException;
@@ -110,11 +111,14 @@ public class ChessClient {
                     break;
                 case "join":
                     serverFacade.joinGame(parts[1], parts[2]);
-                    if (parts[1].equals("WHITE")) {
-                        games.put(WHITE, Integer.valueOf(parts[2]));
-                    } else {
-                        games.put(BLACK, Integer.valueOf(parts[2]));
+                    GameData gameData = null;
+                    gameList = serverFacade.listGames(authTokens.getFirst());
+                    for (var game : gameList.games()) {
+                        if (game.gameID() == Integer.valueOf(parts[2])) {
+                            gameData = game;
+                        }
                     }
+                    renderBoard(gameData);
                     break;
                 case "quit":
                     System.out.println("Thanks for playing!");
@@ -126,6 +130,10 @@ public class ChessClient {
         } catch (Exception ex) {
             printException(ex);
         }
+    }
+
+    private void renderBoard(GameData gameData) {
+
     }
 
     private void printException(Exception ex) {
