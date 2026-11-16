@@ -13,16 +13,13 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static chess.ChessGame.TeamColor.*;
-import static client.ResponseException.Code.ClientError;
-import static client.ResponseException.Code.ServerError;
 import static client.State.*;
 import static ui.EscapeSequences.*;
 
 public class ChessClient {
-    private ServerFacade serverFacade;
+    private final ServerFacade serverFacade;
     private State state = LOGGED_OUT;
     private ArrayList<String> authTokens = new ArrayList<>();
-    private HashMap<ChessGame.TeamColor, Integer> games = new HashMap<>();
 
     public ChessClient() {
         try {
@@ -102,38 +99,32 @@ public class ChessClient {
                     System.out.println("quit - playing chess");
                     break;
                 case "join":
-                    var gameList = serverFacade.listGames(authTokens.getFirst());
-                    int gameID = -1;
-                    int count = 1;
-                    for (var game : gameList.games()) {
-                        if (count++ == Integer.parseInt(parts[2])) {
-                            gameID = game.gameID();
-                        }
+                    var gameData = getGame(Integer.parseInt(parts[2]));
+
+                    if (gameData == null) {
+                        throw new ResponseException(ResponseException.Code.ClientError, "Game not found!");
                     }
-                    serverFacade.joinGame(parts[1], String.valueOf(gameID), authTokens.getFirst());
-                    GameData gameData = null;
-                    for (var game : gameList.games()) {
-                        if (game.gameID() == gameID) {
-                            gameData = game;
-                        }
-                    }
+
+                    serverFacade.joinGame(parts[1], String.valueOf(gameData.gameID()), authTokens.getFirst());
+
                     if (parts[1].equals("WHITE")) {
                         renderBoard(gameData, WHITE);
                     } else {
                         renderBoard(gameData, BLACK);
                     }
+
                     break;
                 case "list":
-                    gameList = serverFacade.listGames(authTokens.getFirst());
-                    if (gameList.games().isEmpty()) {
+                    var gameList = getGameList();
+                    if (gameList.isEmpty()) {
                         System.out.println("No games created!");
                     } else {
                         System.out.println("Game Number  Game Name  White Player  Black Player");
                         int num = 1;
-                        for (var game : gameList.games()) {
+                        for (var game : gameList) {
                             System.out.printf("%11s  %9s  %12s  %12s\n", num++, game.gameName(),
-                                    (game.whiteUsername() == null) ? "" : game.whiteUsername(),
-                                    (game.blackUsername() == null)  ? "" : game.blackUsername());
+                                    (game.whiteUsername() == null) ? "none" : game.whiteUsername(),
+                                    (game.blackUsername() == null) ? "none" : game.blackUsername());
                         }
                     }
                     break;
@@ -142,19 +133,9 @@ public class ChessClient {
                     state = LOGGED_OUT;
                     break;
                 case "observe":
-                    gameList = serverFacade.listGames(authTokens.getFirst());
-                    gameID = -1;
-                    count = 1;
-                    for (var game : gameList.games()) {
-                        if (count++ == Integer.parseInt(parts[1])) {
-                            gameID = game.gameID();
-                        }
-                    }
-                    gameData = null;
-                    for (var game : gameList.games()) {
-                        if (game.gameID() == gameID) {
-                            gameData = game;
-                        }
+                    gameData = getGame(Integer.parseInt(parts[1]));
+                    if (gameData == null) {
+                        throw new ResponseException(ResponseException.Code.ClientError, "Game not found!");
                     }
                     renderBoard(gameData, WHITE);
                     break;
@@ -168,6 +149,21 @@ public class ChessClient {
         } catch (Exception ex) {
             printException(ex);
         }
+    }
+
+    private HashSet<GameData> getGameList() throws ResponseException {
+        return serverFacade.listGames(authTokens.getFirst()).games();
+    }
+
+    private GameData getGame(int gameID) throws ResponseException {
+        var gameList = getGameList();
+        int count = 1;
+        for (var game : gameList) {
+            if (count++ == gameID) {
+                return game;
+            }
+        }
+        return null;
     }
 
     private void renderBoard(GameData gameData, ChessGame.TeamColor teamColor) {
@@ -198,18 +194,13 @@ public class ChessClient {
                 } else {
                     // Render each piece according to the correct bg color and team color
                     if (board.getPiece(new ChessPosition(row, col)).getTeamColor() == WHITE) {
-                        sb.append(bgColor)
-                                .append(SET_TEXT_COLOR_RED)
-                                .append(" ")
-                                .append(board.getPiece(new ChessPosition(row, col)).toString())
-                                .append(" ");
+                        sb.append(bgColor).append(SET_TEXT_COLOR_RED);
                     } else {
-                        sb.append(bgColor)
-                                .append(SET_TEXT_COLOR_BLUE)
-                                .append(" ")
-                                .append(board.getPiece(new ChessPosition(row, col)).toString())
-                                .append(" ");
+                        sb.append(bgColor).append(SET_TEXT_COLOR_BLUE);
                     }
+                    sb.append(" ")
+                            .append(board.getPiece(new ChessPosition(row, col)).toString())
+                            .append(" ");
                 }
             }
             // Reset the bg color so the board doesn't stretch across entire screen
@@ -222,7 +213,7 @@ public class ChessClient {
 
     private void printFirstAndLastRow(ChessGame.TeamColor teamColor) {
         StringBuilder sb = new StringBuilder();
-        if(teamColor == WHITE) {
+        if (teamColor == WHITE) {
             sb.append(SET_BG_COLOR_MAGENTA)
                     .append(SET_TEXT_COLOR_WHITE)
                     .append("    A  B  C  D  E  F  G  H    ")
@@ -247,8 +238,6 @@ public class ChessClient {
                 case ServerError:
                     System.out.println("I'm sorry, the server experienced an error. Please try again.");
                     break;
-                default:
-                    System.out.println("I'm sorry, the system experienced an error. Please try again.");
             }
         } else {
             System.out.println("I'm sorry, the system experienced an error. Please try again.");
